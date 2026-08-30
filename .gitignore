@@ -1,0 +1,35 @@
+# Nix build outputs
+
+result
+result-*
+
+# Neovim local/runtime state
+
+.nvim/
+.cache/
+.local/
+
+# Development-only files
+
+.direnv/
+.envrc.local
+
+# Editor swap/backup files
+
+*.swp
+*.swo
+*~
+*.tmp
+*.bak
+
+# OS metadata
+
+.DS_Store
+Thumbs.db
+
+# Local test/debug artifacts
+
+tests/tmp/
+tests/output/
+*.log
+
