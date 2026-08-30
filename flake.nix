@@ -1,15 +1,30 @@
 {
-  description = "A very basic flake";
+  description = "Nix-managed Neovim configuration";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
 
-  outputs = inputs: {
-    packages = builtins.mapAttrs (system: pkgs: {
-      hello = pkgs.hello;
+  outputs =
+    { nixpkgs, ... }:
+    let
+      systems = [
+        "x86_64-linux"
+        "aarch64-linux"
+      ];
 
-      default = inputs.self.packages.${system}.hello;
-    }) inputs.nixpkgs.legacyPackages;
-  };
+      forAllSystems = nixpkgs.lib.genAttrs systems;
+    in
+    {
+      packages = forAllSystems (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+        in
+        {
+          nvim = pkgs.neovim;
+          default = pkgs.neovim;
+        }
+      );
+    };
 }
