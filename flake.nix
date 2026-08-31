@@ -20,10 +20,15 @@
         system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
+
+          nvim = import ./nix/package.nix {
+            inherit pkgs;
+            configDir = ./config;
+          };
         in
         {
-          nvim = pkgs.neovim;
-          default = pkgs.neovim;
+          inherit nvim;
+          default = nvim;
         }
       );
     };
