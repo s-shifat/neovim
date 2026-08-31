@@ -25,10 +25,29 @@
             inherit pkgs;
             configDir = ./config;
           };
+
+          workflowTools = import ./nix/workflow-tools.nix {
+            inherit pkgs;
+          };
         in
         {
           inherit nvim;
+
+          workflow-tools = workflowTools;
+
           default = nvim;
+        }
+      );
+
+      devShells = forAllSystems (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+        in
+        {
+          default = import ./nix/dev-shell.nix {
+            inherit pkgs;
+          };
         }
       );
     };
