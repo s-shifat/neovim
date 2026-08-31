@@ -4,9 +4,6 @@ stable_repo="${NVIM_STABLE_REPO:-$HOME/projects/neovim}"
 next_worktree="${NVIM_NEXT_WORKTREE:-$HOME/projects/neovim-next}"
 stable_branch="${NVIM_STABLE_BRANCH:-main}"
 
-state_home="${XDG_STATE_HOME:-$HOME/.local/state}"
-stable_profile="${NVIM_STABLE_PROFILE:-$state_home/neovim/stable-profile}"
-
 die() {
   echo "nvim-exp: $*" >&2
   exit 1
@@ -22,12 +19,12 @@ ensure_next_worktree() {
     die "no active experiment worktree at $next_worktree"
 }
 
-is_dirty() {
-  [[ -n "$(git -C "$1" status --porcelain)" ]]
-}
-
 current_branch() {
   git -C "$1" branch --show-current
+}
+
+is_dirty() {
+  [[ -n "$(git -C "$1" status --porcelain)" ]]
 }
 
 ensure_stable_ready() {
@@ -46,22 +43,6 @@ ensure_stable_ready() {
   fi
 }
 
-deploy_stable() {
-  mkdir -p "$(dirname "$stable_profile")"
-
-  if [[ -x "$stable_profile/bin/nvim" ]]; then
-    echo "Updating stable Neovim profile..."
-    nix profile upgrade \
-      --profile "$stable_profile" \
-      --all
-  else
-    echo "Creating stable Neovim profile..."
-    nix profile install \
-      --profile "$stable_profile" \
-      "path:$stable_repo#nvim"
-  fi
-}
-
 inside_next_worktree() {
   case "$PWD/" in
     "$next_worktree/"*)
@@ -71,19 +52,6 @@ inside_next_worktree() {
       return 1
       ;;
   esac
-}
-
-cmd_setup() {
-  ensure_stable_ready
-
-  echo "Building and installing stable Neovim from:"
-  echo "  $stable_repo"
-  echo
-
-  deploy_stable
-
-  echo
-  echo "Stable Neovim is ready."
 }
 
 cmd_new() {
@@ -145,12 +113,6 @@ cmd_status() {
     echo "  working:    modified"
   else
     echo "  working:    clean"
-  fi
-
-  if [[ -x "$stable_profile/bin/nvim" ]]; then
-    echo "  profile:    $(readlink -f "$stable_profile")"
-  else
-    echo "  profile:    not initialized"
   fi
 
   echo
@@ -269,9 +231,6 @@ cmd_promote() {
     --ff-only \
     "$branch"
 
-  echo
-  deploy_stable
-
   git -C "$stable_repo" worktree remove \
     "$next_worktree"
 
@@ -280,33 +239,41 @@ cmd_promote() {
   git -C "$stable_repo" worktree prune
 
   echo
-  echo "Promotion complete."
+  echo "Source promotion complete."
   echo
-  echo "Stable nvim now uses:"
+  echo "Stable source is now:"
   git -C "$stable_repo" log -1 --oneline
+  echo
+  echo "Installed Neovim has NOT been changed automatically."
+  echo "Deploy the new stable revision through your dotfiles"
+  echo "or upgrade the standalone Nix installation."
 }
 
 cmd_help() {
   cat <<'HELP'
 Usage:
-  nvim-exp setup
   nvim-exp new <name>
   nvim-exp status
   nvim-exp discard
   nvim-exp promote
 
 Commands:
-  setup        Build/install the current stable Neovim
-  new          Create experiment/<name> in ~/projects/neovim-next
-  status       Show stable and experimental state
-  discard      Permanently remove the active experiment
-  promote      Build, fast-forward merge, and deploy the experiment
+  new       Create experiment/<name> in ~/projects/neovim-next
+  status    Show stable and experimental Git state
+  discard   Permanently remove the active experiment
+  promote   Build and fast-forward merge the experiment into main
 
 Typical workflow:
+
   nvim-exp new keybind
   nvim-next
 
-  # edit/test/commit inside ~/projects/neovim-next
+  # Edit/test in ~/projects/neovim-next
+  # Lua-only changes need no rebuild.
+
+  cd ~/projects/neovim-next
+  git add .
+  git commit -m "feat: change keybinding"
 
   cd ~
   nvim-exp promote
@@ -314,9 +281,6 @@ HELP
 }
 
 case "${1:-help}" in
-  setup)
-    cmd_setup
-    ;;
   new)
     shift
     cmd_new "$@"

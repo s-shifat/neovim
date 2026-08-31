@@ -1,11 +1,6 @@
 { pkgs }:
 
 let
-  stableLauncher = pkgs.writeShellApplication {
-    name = "nvim";
-    text = builtins.readFile ../scripts/nvim.sh;
-  };
-
   nextLauncher = pkgs.writeShellApplication {
     name = "nvim-next";
 
@@ -32,7 +27,6 @@ pkgs.symlinkJoin {
   name = "neovim-workflow-tools";
 
   paths = [
-    stableLauncher
     nextLauncher
     experimentManager
   ];

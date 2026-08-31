@@ -29,9 +29,20 @@
           workflowTools = import ./nix/workflow-tools.nix {
             inherit pkgs;
           };
+
+          full = pkgs.symlinkJoin {
+            name = "neovim-full";
+
+            paths = [
+              nvim
+              workflowTools
+            ];
+
+            meta.mainProgram = "nvim";
+          };
         in
         {
-          inherit nvim;
+          inherit nvim full;
 
           workflow-tools = workflowTools;
 
