@@ -1,3 +1,10 @@
+if vim.env.NVIM_APPNAME ~= "nvim-next" then
+  error(
+    "nvim-next: refusing to start without NVIM_APPNAME=nvim-next; "
+      .. "experimental mutable state must remain isolated from stable Neovim"
+  )
+end
+
 local root = vim.env.NEOVIM_DEV_ROOT
 
 if not root or root == "" then
