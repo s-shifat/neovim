@@ -15,10 +15,12 @@ let
     name = "nvim-exp";
 
     runtimeInputs = [
+      pkgs.bash
       pkgs.coreutils
       pkgs.git
       pkgs.nix
       pkgs.openssh
+      nextLauncher
     ];
 
     text = builtins.readFile ../scripts/nvim-exp.sh;

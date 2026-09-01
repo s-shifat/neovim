@@ -50,6 +50,31 @@
         }
       );
 
+      checks = forAllSystems (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+
+          nvim = import ./nix/package.nix {
+            inherit pkgs;
+            configDir = ./config;
+          };
+
+          workflowTools = import ./nix/workflow-tools.nix {
+            inherit pkgs;
+          };
+        in
+        import ./nix/checks.nix {
+          inherit
+            pkgs
+            nvim
+            workflowTools
+            ;
+
+          configDir = ./config;
+        }
+      );
+
       devShells = forAllSystems (
         system:
         let

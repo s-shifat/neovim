@@ -413,9 +413,29 @@ cmd_promote() {
     die "experiment is not based on current stable"
   fi
 
-  echo "Building candidate before promotion..."
+  echo "Running candidate flake checks..."
 
-  nix build "path:$next_worktree#nvim" --no-link
+  nix flake check "path:$next_worktree"
+
+  echo
+  echo "Building candidate package..."
+
+  candidate_path="$(
+    nix build \
+      "path:$next_worktree#nvim" \
+      --no-link \
+      --print-out-paths
+  )"
+
+  [[ -n "$candidate_path" ]] ||
+    die "candidate build did not return an output path"
+
+  echo
+  echo "Verifying stable/experimental state isolation..."
+
+  NVIM_STABLE_CMD="$candidate_path/bin/nvim" \
+  NVIM_NEXT_CMD="nvim-next" \
+    bash "$next_worktree/tests/state-isolation.sh"
 
   echo
   echo "Promoting:"
@@ -458,7 +478,7 @@ Commands:
   new       Create experiment/<name> in a temporary Git worktree
   status    Show development repository and experiment state
   discard   Permanently remove the active experiment
-  promote   Build and fast-forward merge the experiment into main
+  promote   Check, build, and fast-forward merge the experiment into main
 
 Stable nvim does not require a local clone.
 
