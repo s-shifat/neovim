@@ -18,6 +18,7 @@ let
       pkgs.coreutils
       pkgs.git
       pkgs.nix
+      pkgs.openssh
     ];
 
     text = builtins.readFile ../scripts/nvim-exp.sh;
