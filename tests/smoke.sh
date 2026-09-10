@@ -54,6 +54,28 @@ if vim.g.neovim_config_loaded ~= true then
   fail("packaged Neovim configuration did not finish loading")
 end
 
+-- Exercise core TextYankPost behavior so broken autocmd callbacks fail the smoke test.
+local yank_ok, yank_err = pcall(function()
+  vim.api.nvim_buf_set_lines(
+    0,
+    0,
+    -1,
+    false,
+    {
+      "smoke yank line one",
+      "smoke yank line two",
+    }
+  )
+
+  vim.cmd("normal! gg")
+  vim.cmd("normal! yy") -- Trigger TextYankPost for a real yank.
+  vim.cmd("normal! dd") -- Trigger TextYankPost for a real delete.
+end)
+
+if not yank_ok then
+  fail("TextYankPost callback failed: " .. tostring(yank_err))
+end
+
 local expected_runtime = vim.env.NVIM_SMOKE_EXPECT_RUNTIME
 
 if expected_runtime and expected_runtime ~= "" then

@@ -13,10 +13,10 @@ api.nvim_create_autocmd("TextYankPost", {
   group = highlight_yank_group,
   desc = "Briefly highlight yanked text",
   callback = function()
-    vim.hl.hl_op({
-      higroup = "Search",
-      timeout = 100,
-    }) -- Flash the copied region so a yank has immediate visual confirmation.
+  vim.hl.on_yank({
+    higroup = "Search",
+    timeout = 100,
+  }) -- Briefly highlight yanked text; delete operations are ignored automatically.
   end,
 })
 
