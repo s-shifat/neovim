@@ -1,4 +1,5 @@
 local theme = require("user.ui.theme")
+local catppuccin = require("user.ui.themes.catppuccin")
 
 
 -- ============================================================================
@@ -7,4 +8,8 @@ local theme = require("user.ui.theme")
 
 theme.setup({
   default = "catppuccin-mocha",
-}) -- Use Mocha by default while keeping the theme loader itself generic.
+
+  configure = function(name)
+    catppuccin.configure(name)
+  end,
+}) -- Use Mocha by default while delegating Catppuccin-specific behavior to its own module.
