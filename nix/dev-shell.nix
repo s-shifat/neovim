@@ -1,11 +1,25 @@
 { pkgs }:
 
 let
+  # Use the exact same plugin inventory as packaged production Neovim.
+  plugins = import ./plugins.nix {
+    inherit pkgs;
+  };
+
+  # Experimental Neovim contains the same Nix-owned plugins as production,
+  # but does NOT embed the production Lua config. dev/init.lua loads the
+  # experiment worktree's Lua configuration live instead.
+  nvimDev = pkgs.neovim.override {
+    configure = {
+      packages.user = plugins;
+    };
+  };
+
   nvimNextDev = pkgs.writeShellApplication {
     name = "nvim-next-dev";
 
     runtimeInputs = [
-      pkgs.neovim
+      nvimDev
     ];
 
     text = ''
@@ -24,7 +38,7 @@ let
 in
 pkgs.mkShell {
   packages = [
-    pkgs.neovim
+    nvimDev
     nvimNextDev
   ];
 }
