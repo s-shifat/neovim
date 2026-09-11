@@ -15,11 +15,6 @@
 
     catppuccin-nvim # Catppuccin colorscheme; Mocha will become our default.
 
-    # ------------------------------------------------------------------------
-    # UI — ICONS
-    # ------------------------------------------------------------------------
-
-    nvim-web-devicons # Filetype/filename icons using the Nerd Font provided by the host system.
   ];
 
   # ==========================================================================

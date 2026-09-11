@@ -32,6 +32,9 @@ export XDG_DATA_HOME="$tmp_dir/xdg-data"
 export XDG_STATE_HOME="$tmp_dir/xdg-state"
 export XDG_CACHE_HOME="$tmp_dir/xdg-cache"
 
+# Test the editor's declared default theme, not a caller-provided temporary override.
+unset NVIM_COLORSCHEME
+
 mkdir -p \
   "$HOME" \
   "$XDG_CONFIG_HOME" \
@@ -52,6 +55,54 @@ end
 
 if vim.g.neovim_config_loaded ~= true then
   fail("packaged Neovim configuration did not finish loading")
+end
+
+-- Verify that the Nix-packaged theme plugin and declared default colorscheme loaded.
+local catppuccin_ok, catppuccin_err = pcall(require, "catppuccin")
+
+if not catppuccin_ok then
+  fail(
+    "Catppuccin plugin is unavailable: "
+      .. tostring(catppuccin_err)
+  )
+end
+
+local theme_default = vim.g.neovim_theme_default
+local theme_requested = vim.g.neovim_theme_requested
+local theme_loaded = vim.g.neovim_theme_loaded
+
+if type(theme_default) ~= "string" or theme_default == "" then
+  fail("default colorscheme was not declared")
+end
+
+if theme_requested ~= theme_default then
+  fail(
+    ("startup requested colorscheme '%s', expected default '%s'")
+      :format(
+        tostring(theme_requested),
+        tostring(theme_default)
+      )
+  )
+end
+
+if theme_loaded ~= theme_requested then
+  fail(
+    ("requested colorscheme '%s' but loaded '%s'")
+      :format(
+        tostring(theme_requested),
+        tostring(theme_loaded)
+      )
+  )
+end
+
+if vim.g.colors_name ~= theme_loaded then
+  fail(
+    ("Neovim reports active colorscheme '%s', expected '%s'")
+      :format(
+        tostring(vim.g.colors_name),
+        tostring(theme_loaded)
+      )
+  )
 end
 
 -- Exercise core TextYankPost behavior so broken autocmd callbacks fail the smoke test.
