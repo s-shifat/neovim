@@ -81,13 +81,13 @@ A stage may also contain smaller completed and remaining sub-stages.
 The latest completed editor milestone is:
 
 ```text
-Stage 7A — Theme Foundation
+Stage 7B — which-key
 ```
 
 The current editor-development target is:
 
 ```text
-Stage 7B — which-key
+Stage 7C — Statusline
 ```
 
 Exact source and deployed revisions should be determined from the current repositories rather than recorded here.
@@ -550,29 +550,29 @@ The Nerd Font itself remains a host-system responsibility and is already supplie
 
 ## Stage 7B — which-key
 
-**Status: CURRENT**
+**Status: COMPLETE**
 
 Goal:
 
 > Make the leader-key hierarchy discoverable without replacing normal Vim interaction.
 
-Expected work:
+Implemented:
 
 ```text
-add which-key through Nix
+which-key supplied through the shared Nix plugin inventory
 
-create a clean Lua configuration boundary
+dedicated user.ui.which-key configuration boundary
 
-register/discover existing leader mappings
+300 ms discovery delay
 
-introduce meaningful leader namespaces as features require them
+existing keymap descriptions discovered without a duplicate registry
 
-preserve existing keymap descriptions
+mapping icons disabled without adding an icon dependency
 
-avoid large speculative namespace trees
+Catppuccin Which-Key integration enabled explicitly
 ```
 
-The implementation should build on existing mappings rather than redesigning the keybinding system.
+No mappings, manual invocation, or speculative leader groups were added.
 
 Testing should protect startup/integration invariants rather than exact popup appearance or label cosmetics.
 
@@ -580,7 +580,7 @@ Testing should protect startup/integration invariants rather than exact popup ap
 
 ## Stage 7C — Statusline
 
-**Status: PLANNED**
+**Status: CURRENT**
 
 Goal:
 
@@ -1357,8 +1357,6 @@ docs/references.md
 The expected near-term sequence is:
 
 ```text
-Stage 7B — which-key
-        ↓
 Stage 7C — statusline
         ↓
 Stage 7D — Git signs
@@ -1406,8 +1404,8 @@ This order may be refined when a dependency relationship provides a concrete rea
 | 6     | Native plugin-free core            | COMPLETE    |
 | 6 fix | Yank-highlight regression          | COMPLETE    |
 | 7A    | Theme foundation                   | COMPLETE    |
-| 7B    | which-key                          | **CURRENT** |
-| 7C    | Statusline                         | PLANNED     |
+| 7B    | which-key                          | COMPLETE    |
+| 7C    | Statusline                         | **CURRENT** |
 | 7D    | Git signs                          | PLANNED     |
 | 7E    | Notifications                      | PLANNED     |
 | 8     | Navigation/editor workflow         | PLANNED     |
@@ -1441,4 +1439,3 @@ FINISH V1 BEFORE CHASING OPTIONAL COMPLEXITY.
 
 LET CURRENT REPOSITORY REALITY UPDATE THE ROADMAP.
 ```
-

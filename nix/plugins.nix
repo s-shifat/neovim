@@ -15,6 +15,12 @@
 
     catppuccin-nvim # Catppuccin colorscheme; Mocha will become our default.
 
+    # ------------------------------------------------------------------------
+    # UI — DISCOVERABILITY
+    # ------------------------------------------------------------------------
+
+    which-key-nvim # Discover existing described mappings after a short pause.
+
   ];
 
   # ==========================================================================
