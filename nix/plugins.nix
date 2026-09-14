@@ -16,6 +16,12 @@
     catppuccin-nvim # Catppuccin colorscheme; Mocha will become our default.
 
     # ------------------------------------------------------------------------
+    # UI — ICONS
+    # ------------------------------------------------------------------------
+
+    nvim-web-devicons # Shared icon provider for plugin-backed UI consumers.
+
+    # ------------------------------------------------------------------------
     # UI — DISCOVERABILITY
     # ------------------------------------------------------------------------
 

@@ -105,6 +105,17 @@ if vim.g.colors_name ~= theme_loaded then
   )
 end
 
+-- Verify that the shared icon provider was initialized during normal UI startup.
+local devicons_ok, devicons = pcall(require, "nvim-web-devicons")
+
+if not devicons_ok then
+  fail("nvim-web-devicons plugin is unavailable")
+end
+
+if devicons.has_loaded() ~= true then
+  fail("nvim-web-devicons was not initialized during UI startup")
+end
+
 -- Exercise core TextYankPost behavior so broken autocmd callbacks fail the smoke test.
 local yank_ok, yank_err = pcall(function()
   vim.api.nvim_buf_set_lines(

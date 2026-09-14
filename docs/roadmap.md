@@ -126,9 +126,11 @@ Nix-owned shared plugin inventory
 generic colorscheme infrastructure
 
 Catppuccin Mocha default
+
+nvim-web-devicons initialized centrally in the UI layer
 ```
 
-Icon support is intentionally not yet part of the current standalone Neovim plugin baseline.
+`nvim-web-devicons` is now part of the shared standalone Neovim plugin baseline. Consumer-specific icon behavior remains owned by the UI features that use it.
 
 This means future work should normally focus on editor capabilities rather than redesigning the underlying experiment/deployment architecture.
 
@@ -524,7 +526,7 @@ The experiment was then fast-forward promoted to Neovim `main` and deployed thro
 
 ## Icons
 
-**Icon foundation was intentionally deferred.**
+**Status: COMPLETE**
 
 `nvim-web-devicons` was initially considered for Stage 7A and briefly added during development, but it was removed before Stage 7A was promoted.
 
@@ -532,17 +534,17 @@ Reason:
 
 > Icons should be introduced alongside the first UI component that actually consumes them rather than packaged speculatively.
 
-Therefore the current Stage 7A implementation does **not** contain:
+The shared icon foundation was introduced when the first real consumer became imminent. The current baseline now contains:
 
 ```text
 nvim-web-devicons
 
 user/ui/icons.lua
 
-icon-specific configuration
+central UI-layer initialization after the colorscheme and before consumer plugins
 ```
 
-Icon support will be introduced later with a relevant consumer such as the file explorer, buffer bar, Telescope results, or another navigation/UI component.
+The provider uses upstream defaults. Consumer-specific icon behavior remains owned by future features such as the file explorer, buffer bar, Telescope results, or another navigation/UI component.
 
 The Nerd Font itself remains a host-system responsibility and is already supplied through the NixOS dotfiles.
 
