@@ -407,6 +407,26 @@ The theme layer should remain replaceable.
 
 ---
 
+## Stage 8A Telescope dependencies
+
+Current implementation references adopted for the search foundation:
+
+```text
+https://github.com/nvim-telescope/telescope.nvim
+https://github.com/nvim-lua/plenary.nvim
+https://github.com/nvim-telescope/telescope-fzf-native.nvim
+https://github.com/nvim-telescope/telescope-ui-select.nvim
+https://github.com/nvim-telescope/telescope-live-grep-args.nvim
+https://github.com/BurntSushi/ripgrep
+https://github.com/sharkdp/fd
+```
+
+These are implementation dependencies or backend tools, not behavioral
+authority. Telescope remains the primary fuzzy-search layer; the native sorter
+does not require the `fzf` command-line executable.
+
+---
+
 # 11. Behavioral Reference Policy
 
 Behavioral reference precedence and the detailed behavioral research sequence are defined in:
@@ -575,4 +595,3 @@ UPSTREAM HISTORICAL PROJECT
 CURRENT UPSTREAM PROJECTS
 → HOW TO IMPLEMENT IT TODAY
 ```
-

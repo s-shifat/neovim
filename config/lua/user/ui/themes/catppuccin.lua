@@ -82,6 +82,9 @@ function M.configure(name)
       snacks = {
         enabled = true, -- Apply Catppuccin highlights to Snacks notifications.
       },
+      telescope = {
+        enabled = true, -- Apply Catppuccin highlights to Telescope pickers.
+      },
       which_key = true, -- Apply Catppuccin highlights to the Which-Key popup.
     },
   })

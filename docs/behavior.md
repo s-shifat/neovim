@@ -768,10 +768,39 @@ later Treesitter symbols
 later LSP symbols/references
 ```
 
-Resume is a first-class action. Preview should remain available where useful
-and toggleable.
+Resume is a first-class action. File, content, buffer, recent-file, config, and
+diagnostic pickers start with a useful preview visible. Compact selection
+pickers may omit it.
 
 A search should not feel permanently lost merely because one result was selected.
+
+The initial search namespace is:
+
+```text
+<leader>sp  project files at the Git root, or cwd outside Git
+<leader>sf  files from cwd
+<leader>st  live grep with interactive ripgrep arguments
+<leader>sw  current-word or visual-selection grep
+<leader>s/  grep open files
+<leader>sb  buffers
+<leader>sr  resume
+<leader>s.  recent files
+<leader>sh  help
+<leader>sk  keymaps
+<leader>ss  Telescope builtins
+<leader>sn  editable Neovim config source when available
+<leader>sd  diagnostics
+```
+
+`<leader>su` owns Telescope interface/search controls. `<leader>sup` hides or
+restores the preview only from Telescope Normal mode, leaving Space available
+for query input in Insert mode. `<leader>sua` finds all files and `<leader>sug`
+greps all content with ignored and hidden paths included deliberately.
+
+Ordinary file and text searches include useful hidden project files, respect
+project ignore rules, and exclude common environment/cache trees and lock
+files at the `fd`, `rg`, or Git command boundary. The all-files/all-grep controls
+are the explicit escape hatch for suppressed paths.
 
 Search scope should avoid noisy environment and cache trees without globally
 hiding legitimate project content. Project-owned ignore rules and

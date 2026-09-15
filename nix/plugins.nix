@@ -34,6 +34,16 @@
     which-key-nvim # Discover existing described mappings after a short pause.
 
     # ------------------------------------------------------------------------
+    # NAVIGATION — TELESCOPE
+    # ------------------------------------------------------------------------
+
+    plenary-nvim # Lua utility dependency used by Telescope.
+    telescope-nvim # Primary fuzzy-search and discovery interface.
+    telescope-fzf-native-nvim # Native fuzzy sorter for responsive large pickers.
+    telescope-ui-select-nvim # Route vim.ui.select through Telescope.
+    telescope-live-grep-args-nvim # Interactive ripgrep arguments for advanced search.
+
+    # ------------------------------------------------------------------------
     # UI — NOTIFICATIONS
     # ------------------------------------------------------------------------
 

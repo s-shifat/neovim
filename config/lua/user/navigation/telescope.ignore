@@ -1,0 +1,16 @@
+.git/
+.venv/
+venv/
+env/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+node_modules/
+lazy-lock.json
+poetry.lock
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+Cargo.lock

@@ -144,6 +144,37 @@ if vim.fn.executable("git") ~= 1 then
   fail("Git is unavailable to the packaged editor")
 end
 
+-- Verify the Stage 8A search stack is packaged and initialized through the
+-- normal navigation entry point.
+for _, dependency in ipairs({
+  "plenary",
+  "telescope",
+  "telescope._extensions.fzf",
+  "telescope._extensions.ui-select",
+  "telescope._extensions.live_grep_args",
+}) do
+  local dependency_ok, dependency_err = pcall(require, dependency)
+
+  if not dependency_ok then
+    fail(("Telescope dependency '%s' is unavailable: %s"):format(
+      dependency,
+      tostring(dependency_err)
+    ))
+  end
+end
+
+
+if vim.g.neovim_telescope_loaded ~= true then
+  fail("Telescope navigation setup did not finish")
+end
+
+
+for _, executable in ipairs({ "rg", "fd" }) do
+  if vim.fn.executable(executable) ~= 1 then
+    fail(("Telescope backend '%s' is unavailable"):format(executable))
+  end
+end
+
 -- Verify that Snacks owns the standard notification route and only its notifier
 -- lifecycle was enabled during normal UI startup.
 local snacks_ok, snacks = pcall(require, "snacks")

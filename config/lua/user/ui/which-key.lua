@@ -19,6 +19,8 @@ function M.setup()
   which_key.add({
     { "<leader>g", group = "Git" },
     { "<leader>n", group = "Notifications" },
+    { "<leader>s", group = "Search" },
+    { "<leader>su", group = "Telescope UI" },
   })
 end
 

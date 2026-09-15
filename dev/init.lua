@@ -20,5 +20,6 @@ end
 vim.opt.runtimepath:prepend(config_dir)
 
 vim.g.neovim_profile = "next"
+vim.g.neovim_config_source = root .. "/config"
 
 dofile(config_dir .. "/init.lua")

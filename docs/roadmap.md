@@ -689,7 +689,7 @@ explicit, independently reviewable substages.
 
 ## Stage 8A — Telescope Search Foundation
 
-**Status: CURRENT**
+**Status: COMPLETE**
 
 Purpose:
 
@@ -759,7 +759,16 @@ The search namespace direction is:
 → preview toggle
 ```
 
-This does not yet specify every eventual mapping.
+Implemented through the dedicated `user.navigation.telescope` setup and
+`user.navigation.search` workflow modules. The approved mappings are active,
+including Normal/Visual word search, open-buffer grep, resume, and dedicated
+all-files/all-grep ignore overrides under `<leader>su`.
+
+Project search resolves the Git root when available and uses Git's candidate
+set with command-level exclusions; outside Git it falls back to `fd` at the
+cwd. General file search remains cwd-oriented. Ordinary file and grep commands
+include hidden files while excluding targeted cache/environment trees and
+common lock files before traversal/results reach Telescope.
 
 ### Search-Scope Policy
 
@@ -794,8 +803,9 @@ site/
 *.ipynb
 ```
 
-Project-owned ignore rules remain authoritative where appropriate. The exact
-implementation of this exclusion policy belongs to Stage 8A.
+Project-owned ignore rules remain authoritative where appropriate. Explicit
+`<leader>sua` and `<leader>sug` controls make ignored paths and lock files
+reachable without making that expensive scope the default.
 
 ## Stage 8B — Daily File Explorer
 
