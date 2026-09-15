@@ -33,6 +33,12 @@
 
     which-key-nvim # Discover existing described mappings after a short pause.
 
+    # ------------------------------------------------------------------------
+    # UI — GIT SIGNS
+    # ------------------------------------------------------------------------
+
+    gitsigns-nvim # Git gutter signs and buffer-local hunk actions.
+
   ];
 
   # ==========================================================================

@@ -129,6 +129,21 @@ if vim.o.laststatus ~= 3 then
   fail("Lualine did not configure one global statusline")
 end
 
+-- Verify that the packaged Git-sign layer is available and initialized.
+local gitsigns_ok, gitsigns_err = pcall(require, "gitsigns")
+
+if not gitsigns_ok then
+  fail("Gitsigns plugin is unavailable: " .. tostring(gitsigns_err))
+end
+
+if package.loaded.gitsigns == nil then
+  fail("Gitsigns was not initialized during UI startup")
+end
+
+if vim.fn.executable("git") ~= 1 then
+  fail("Git is unavailable to the packaged editor")
+end
+
 -- Exercise core TextYankPost behavior so broken autocmd callbacks fail the smoke test.
 local yank_ok, yank_err = pcall(function()
   vim.api.nvim_buf_set_lines(

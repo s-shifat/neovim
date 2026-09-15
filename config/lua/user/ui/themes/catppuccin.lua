@@ -78,10 +78,8 @@ function M.configure(name)
     auto_integrations = false, -- Never silently enable integrations based on detected plugins.
 
     integrations = {
+      gitsigns = true, -- Use Catppuccin highlights for Git gutter signs.
       which_key = true, -- Apply Catppuccin highlights to the Which-Key popup.
-
-      -- Integrations are intentionally added explicitly as their plugins enter
-      -- this configuration. For example, Gitsigns is handled in Stage 7D.
     },
   })
 

@@ -15,6 +15,10 @@ function M.setup()
       mappings = false, -- Keep mapping labels textual without icon dependencies.
     },
   })
+
+  which_key.add({
+    { "<leader>g", group = "Git" },
+  })
 end
 
 

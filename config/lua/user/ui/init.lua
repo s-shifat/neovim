@@ -1,6 +1,7 @@
 local theme = require("user.ui.theme")
 local catppuccin = require("user.ui.themes.catppuccin")
 local icons = require("user.ui.icons")
+local gitsigns = require("user.ui.gitsigns")
 local statusline = require("user.ui.statusline")
 local which_key = require("user.ui.which-key")
 
@@ -23,6 +24,13 @@ theme.setup({
 -- ============================================================================
 
 icons.setup() -- Initialize the shared icon provider against the active theme.
+
+
+-- ============================================================================
+-- GIT SIGNS
+-- ============================================================================
+
+gitsigns.setup() -- Add Git state and hunk actions only to attached buffers.
 
 
 -- ============================================================================

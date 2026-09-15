@@ -15,6 +15,16 @@ local function lsp_status()
   return "LSP"
 end
 
+local function git_diff()
+  local status = vim.b.gitsigns_status_dict or {}
+
+  return {
+    added = status.added or 0,
+    modified = status.changed or 0,
+    removed = status.removed or 0,
+  }
+end
+
 local function warn_once(message)
   vim.notify_once(
     message,
@@ -47,6 +57,10 @@ function M.setup()
 
       lualine_b = {
         "branch",
+        {
+          "diff",
+          source = git_diff,
+        },
         "diagnostics",
       },
 

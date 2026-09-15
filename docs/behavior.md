@@ -1239,6 +1239,32 @@ but those interfaces should expose ordinary Git state rather than replace it wit
 
 Users should remain able to understand and inspect repository state using normal Git tools.
 
+The persistent Git-sign layer provides gutter indicators and buffer-local hunk
+actions without adding a broader repository-management interface:
+
+```text
+<leader>gj
+→ next hunk
+
+<leader>gk
+→ previous hunk
+
+<leader>gp
+→ preview hunk
+
+<leader>gs
+→ stage hunk (or selected lines in Visual mode)
+
+<leader>gr
+→ reset hunk (or selected lines in Visual mode)
+
+<leader>gu
+→ undo staged hunk
+```
+
+Current-line blame remains disabled. The statusline may summarize added,
+changed, and removed lines while leaving the existing branch display intact.
+
 ---
 
 # 34. Health and Inspection

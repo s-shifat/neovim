@@ -622,7 +622,7 @@ Detailed operational information belongs in the later health interface.
 
 ## Stage 7D — Git Signs
 
-**Status: CURRENT**
+**Status: COMPLETE**
 
 Goal:
 
@@ -646,7 +646,7 @@ The plugin provides an interface over repository state rather than replacing it.
 
 ## Stage 7E — Notifications
 
-**Status: PLANNED**
+**Status: CURRENT**
 
 Goal:
 
@@ -1416,8 +1416,8 @@ This order may be refined when a dependency relationship provides a concrete rea
 | 7A    | Theme foundation                   | COMPLETE    |
 | 7B    | which-key                          | COMPLETE    |
 | 7C    | Statusline                         | COMPLETE    |
-| 7D    | Git signs                          | **CURRENT** |
-| 7E    | Notifications                      | PLANNED     |
+| 7D    | Git signs                          | COMPLETE    |
+| 7E    | Notifications                      | **CURRENT** |
 | 8     | Navigation/editor workflow         | PLANNED     |
 | 9     | Treesitter                         | PLANNED     |
 | 10    | LSP foundation                     | PLANNED     |
