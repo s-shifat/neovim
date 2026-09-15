@@ -81,13 +81,14 @@ A stage may also contain smaller completed and remaining sub-stages.
 The latest completed editor milestone is:
 
 ```text
-Stage 7C — Statusline
+Stage 7E — Notifications
 ```
 
 The current editor-development target is:
 
 ```text
-Stage 7D — Git Signs
+Stage 8 — Navigation and Editor Workflow
+Stage 8A — Telescope Search Foundation
 ```
 
 Exact source and deployed revisions should be determined from the current repositories rather than recorded here.
@@ -683,51 +684,278 @@ Which-Key identifies the notification mapping namespace.
 
 **Status: CURRENT**
 
-This stage builds the main IDE-style navigation experience.
+This stage builds the main navigation and editor-workflow experience through
+explicit, independently reviewable substages.
 
-Expected capabilities include:
+## Stage 8A — Telescope Search Foundation
+
+**Status: CURRENT**
+
+Purpose:
+
+> Establish Telescope as the primary fuzzy-search and discovery interface for the editor.
+
+Telescope is the primary search/navigation UI. It is not being replaced by
+Snacks Picker.
+
+Planned Telescope foundation includes:
 
 ```text
+telescope.nvim
+plenary.nvim
+telescope-fzf-native.nvim
+telescope-ui-select.nvim
+telescope-live-grep-args.nvim
+```
+
+Nix-owned external search tools:
+
+```text
+ripgrep
+fd
+```
+
+`ugrep` is not planned unless a concrete future limitation requires it. The
+`fzf` CLI is not required merely for `telescope-fzf-native`.
+
+Behavioral goals:
+
+```text
+LunarVim-style Telescope interaction/layout
+
+project-file search
+general file search
+live grep with runtime arguments
+word / visual-selection grep
+buffer search
+open-file grep
+recent-file search
+help search
+keymap search
+Telescope builtin discovery
+Neovim-config search
+diagnostic search
+
+Resume as a first-class action
+
+preview available where useful and toggleable on demand
+
+vim.ui.select routed through Telescope
+```
+
+The search namespace direction is:
+
+```text
+<leader>s
+→ Telescope / search namespace
+
+<leader>sp
+→ project files
+
+<leader>su
+→ Telescope UI controls
+
+<leader>sup
+→ preview toggle
+```
+
+This does not yet specify every eventual mapping.
+
+### Search-Scope Policy
+
+Ordinary broad project searches should suppress clearly noisy environment and
+cache trees such as:
+
+```text
+.git/
+.venv/
+venv/
+env/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+node_modules/
+```
+
+Common lock files generally do not need to appear in ordinary broad discovery
+unless explicitly requested. Potentially legitimate project content must not
+be hidden globally merely because it can sometimes be generated. In
+particular, the global exclusion policy should not include:
+
+```text
+lib/
+lib64/
+build/
+dist/
+target/
+site/
+*.ipynb
+```
+
+Project-owned ignore rules remain authoritative where appropriate. The exact
+implementation of this exclusion policy belongs to Stage 8A.
+
+## Stage 8B — Daily File Explorer
+
+**Status: PLANNED**
+
+The selected daily explorer direction is Snacks Explorer.
+
+Target behavior preserves the useful parts of the historical NvimTree workflow:
+
+```text
+left-side project tree
+easy toggle/focus
+reveal current file
+filesystem operations
+Git/diagnostic context where useful
+icons
+replaceable/non-essential to basic editing
+```
+
+The responsibility boundary is:
+
+```text
+Snacks Explorer
+→ daily filesystem/project tree
+
 Telescope
-
-find files
-
-live grep
-
-buffer picker
-
-Telescope Resume
-
-toggleable picker preview
-
-file explorer
-
-browser-like buffer bar
-
-symbols interface
-
-Neovim/tmux directional navigation
-
-basic sessions
-
-small floating terminal where useful
+→ primary fuzzy search/navigation
 ```
 
-Icon support should be introduced when one of these or another actual UI consumer requires it, rather than as a standalone speculative dependency.
+Installing Snacks Explorer must not redefine Snacks Picker as the project's
+primary search interface.
 
-Major behavioral goals are defined in:
+## Stage 8C — Oil On-Demand
+
+**Status: PLANNED**
+
+Oil.nvim is planned as a secondary, on-demand filesystem editing tool. It does
+not replace Snacks Explorer and should not take over normal directory opening
+by default.
+
+Expected usage:
 
 ```text
-docs/behavior.md
+dedicated Oil buffer where useful
+floating Oil workflow where useful
+bulk/editable filesystem operations
 ```
 
-This stage should remain modular.
+This is the planned first deliberate experiment with deferred plugin
+initialization:
 
-For example, selecting a file explorer should not make later replacement prohibitively difficult.
+```text
+Nix owns Oil availability
+normal startup does not initialize Oil
+explicit Oil action initializes/uses it on demand
+```
+
+This does not imply adoption of a runtime plugin manager.
+
+## Stage 8D — Browser-Like Buffer Bar
+
+**Status: PLANNED**
+
+Target behavior:
+
+```text
+visible browser-like buffer bar
+all buffers remain discoverable through Telescope
+safe buffer closing remains authoritative
+normal Neovim buffers remain the underlying model
+```
+
+Bufferline is the leading historical/modern candidate, but plugin selection
+remains part of the Stage 8D design step.
+
+## Stage 8E — Neovim / tmux Navigation
+
+**Status: PLANNED**
+
+Target behavior:
+
+```text
+Ctrl-h/j/k/l
+→ seamless directional movement across Neovim splits and tmux panes
+```
+
+Preserve the existing resize muscle memory where practical. A modern solution
+such as `smart-splits.nvim` is a leading candidate, but the final decision must
+follow inspection of the current tmux configuration.
+
+## Stage 8F — Quick Terminal
+
+**Status: PLANNED**
+
+The selected direction is Snacks Terminal.
+
+Target behavior:
+
+```text
+toggleable
+horizontal bottom panel
+similar role to the default VS Code terminal position
+opens in the current project/working directory
+used for quick commands, short tests, and brief shell interaction
+```
+
+Responsibility boundary:
+
+```text
+Snacks Terminal
+→ short/basic tasks
+
+tmux
+→ durable shells
+→ agents
+→ REPLs
+→ logs
+→ long-running processes
+```
+
+The Neovim terminal is not the durable shell/session layer.
+
+## Stage 8G — Sessions / Project Context
+
+**Status: PLANNED**
+
+Sessions have a dedicated design substage because they overlap with:
+
+```text
+project identity
+project root
+working directory
+session ownership
+project-local configuration
+project environment
+future tmux/project reconstruction
+```
+
+The intended behavioral direction remains approximately:
+
+```text
+save conveniently
+restore deliberately
+stable and experimental session state remain isolated
+```
+
+Implementation should be decided only after the project/session model is
+discussed. Neither `persistence.nvim` nor native `:mksession` is selected yet.
+
+Major behavioral goals are defined in `docs/behavior.md`. Each substage should
+remain modular so that selecting one interface does not make later replacement
+prohibitively difficult.
 
 ---
 
-# 9. Stage 9 — Treesitter
+# 9. Stage 9 — Treesitter and Structural Navigation
+
+**Status: PLANNED**
+
+## Stage 9A — Treesitter Foundation
 
 **Status: PLANNED**
 
@@ -752,6 +980,24 @@ language-specific parser availability
 Do not install every available parser by default.
 
 Parsers should be added intentionally for supported languages.
+
+## Stage 9B — Symbols / Outline
+
+**Status: PLANNED**
+
+Goal:
+
+```text
+structural symbol outline
+fuzzy symbol navigation through Telescope
+Treesitter-backed symbols initially
+LSP enrichment after Stage 10
+```
+
+A useful symbols/outline layer should have a real structural backend rather
+than being introduced before Treesitter or LSP exists. Aerial is currently the
+leading implementation candidate, but the final plugin and configuration
+decision remains part of Stage 9B design.
 
 ---
 
@@ -1380,15 +1626,25 @@ docs/references.md
 The expected near-term sequence is:
 
 ```text
-Stage 7D — Git signs
+Stage 8A — Telescope Search Foundation
         ↓
-Stage 7E — notifications
+Stage 8B — Daily File Explorer
         ↓
-Stage 8 — navigation/editor workflow
+Stage 8C — Oil On-Demand
         ↓
-Stage 9 — Treesitter
+Stage 8D — Browser-Like Buffer Bar
         ↓
-Stage 10 — LSP
+Stage 8E — Neovim/tmux Navigation
+        ↓
+Stage 8F — Quick Terminal
+        ↓
+Stage 8G — Sessions / Project Context
+        ↓
+Stage 9A — Treesitter Foundation
+        ↓
+Stage 9B — Symbols / Outline
+        ↓
+Stage 10 — LSP Foundation
         ↓
 Stage 11 — completion/snippets
         ↓
@@ -1428,9 +1684,9 @@ This order may be refined when a dependency relationship provides a concrete rea
 | 7B    | which-key                          | COMPLETE    |
 | 7C    | Statusline                         | COMPLETE    |
 | 7D    | Git signs                          | COMPLETE    |
-| 7E    | Notifications                      | **CURRENT** |
-| 8     | Navigation/editor workflow         | PLANNED     |
-| 9     | Treesitter                         | PLANNED     |
+| 7E    | Notifications                      | COMPLETE    |
+| 8     | Navigation/editor workflow         | **CURRENT** |
+| 9     | Treesitter / structural navigation | PLANNED     |
 | 10    | LSP foundation                     | PLANNED     |
 | 11    | Completion/snippets                | PLANNED     |
 | 12    | Formatting/linting                 | PLANNED     |

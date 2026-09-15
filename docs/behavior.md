@@ -749,49 +749,70 @@ Do not introduce complicated deduplication machinery merely to suppress a small 
 
 Fuzzy navigation is a first-class workflow.
 
-Telescope is strongly preferred for the primary fuzzy-search interface.
+Telescope is the primary fuzzy-search and discovery interface.
 
 Desired capabilities include:
 
 ```text
-find files
-
+project files
+general files
 live grep
-
-buffer search
-
-resume previous picker/search
-
-toggleable preview
+type/glob/directory constrained searches
+buffers
+recent files
+open files
+help
+keymaps
+diagnostics
+later Treesitter symbols
+later LSP symbols/references
 ```
 
-Resume behavior is particularly important.
+Resume is a first-class action. Preview should remain available where useful
+and toggleable.
 
 A search should not feel permanently lost merely because one result was selected.
 
+Search scope should avoid noisy environment and cache trees without globally
+hiding legitimate project content. Project-owned ignore rules and
+configuration remain authoritative where appropriate.
+
+## Symbols / Outline
+
+Symbols should provide a structural outline and integrate with Telescope for
+fuzzy navigation. This interface is expected only after a structural backend
+such as Treesitter exists; it is not currently implemented. LSP may enrich it
+later.
+
 ---
 
-# 20. File Explorer
+# 20. File Exploration
 
-The desired file explorer behaves as an optional navigation surface rather than the foundation of file editing.
+The selected file-exploration model is:
+
+```text
+Snacks Explorer
+→ daily left-side project tree
+
+Oil
+→ secondary on-demand editable filesystem interface
+```
+
+These are optional navigation and filesystem surfaces rather than the
+foundation of file editing.
 
 Expected behavior:
 
 ```text
-toggleable left-side interface
-
 reveal current file
-
 normal filesystem operations
-
-easy replacement if another explorer becomes preferable
+replaceability
+basic editing does not depend on the explorer
 ```
 
-The exact plugin is less important than these behavioral requirements.
-
-The explorer should not be so deeply coupled to other configuration that replacing it becomes difficult.
-
-Until a replacement is actually available, basic fallback file navigation should remain usable.
+Neither interface should be so deeply coupled to other configuration that
+replacing it becomes difficult. Basic fallback file navigation should remain
+usable.
 
 ---
 
@@ -843,7 +864,8 @@ without requiring different muscle memory.
 
 The intended experience is seamless directional navigation.
 
-A floating Neovim terminal may be useful for:
+The quick Neovim terminal should be a toggleable bottom horizontal panel,
+opened in the current project or working directory, for:
 
 ```text
 quick command
@@ -851,13 +873,16 @@ small test
 short shell interaction
 ```
 
-Long-lived work should normally live in tmux.
+tmux remains the durable terminal and process environment for long-lived
+shells, agents, REPLs, logs, and other processes.
 
 ---
 
 # 23. Session Behavior
 
-Basic/manual Neovim sessions are part of the intended editor experience.
+Neovim sessions are part of the intended editor experience. Their design must
+consider project identity and project-root behavior before selecting an
+implementation.
 
 They should restore useful editor state without pretending to preserve operating-system processes.
 
