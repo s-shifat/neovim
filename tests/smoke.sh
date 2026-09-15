@@ -144,6 +144,46 @@ if vim.fn.executable("git") ~= 1 then
   fail("Git is unavailable to the packaged editor")
 end
 
+-- Verify that Snacks owns the standard notification route and only its notifier
+-- lifecycle was enabled during normal UI startup.
+local snacks_ok, snacks = pcall(require, "snacks")
+
+if not snacks_ok then
+  fail("Snacks plugin is unavailable")
+end
+
+if snacks.did_setup ~= true then
+  fail("Snacks was not initialized during UI startup")
+end
+
+if snacks.config.notifier.enabled ~= true then
+  fail("Snacks notifier is not enabled")
+end
+
+vim.notify("notification smoke test", vim.log.levels.INFO)
+
+if vim.notify ~= snacks.notifier.notify then
+  fail("vim.notify was not routed through Snacks notifier")
+end
+
+for _, module in ipairs({
+  "bigfile",
+  "dashboard",
+  "explorer",
+  "indent",
+  "input",
+  "picker",
+  "quickfile",
+  "scope",
+  "scroll",
+  "statuscolumn",
+  "words",
+}) do
+  if snacks.config[module].enabled ~= false then
+    fail("unexpected Snacks module enabled: " .. module)
+  end
+end
+
 -- Exercise core TextYankPost behavior so broken autocmd callbacks fail the smoke test.
 local yank_ok, yank_err = pcall(function()
   vim.api.nvim_buf_set_lines(

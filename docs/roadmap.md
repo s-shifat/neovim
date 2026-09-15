@@ -646,7 +646,7 @@ The plugin provides an interface over repository state rather than replacing it.
 
 ## Stage 7E — Notifications
 
-**Status: CURRENT**
+**Status: COMPLETE**
 
 Goal:
 
@@ -666,11 +666,22 @@ limited repeated warning spam where simple
 
 Avoid complex notification infrastructure solely for visual polish.
 
+Implemented with the `snacks.nvim` notifier as the standard `vim.notify`
+backend. Notifications use the compact top-right presentation with a
+three-second default timeout, wrapped long messages, non-focusable transient
+windows, session-local history, and mappings to inspect history or dismiss
+visible notifications.
+
+Only the notifier lifecycle is enabled. Snacks modules with automatic setup
+lifecycles remain explicitly disabled, while its on-demand utilities receive
+no configuration or mappings. Catppuccin owns the notification highlights and
+Which-Key identifies the notification mapping namespace.
+
 ---
 
 # 8. Stage 8 — Navigation and Editor Workflow
 
-**Status: PLANNED**
+**Status: CURRENT**
 
 This stage builds the main IDE-style navigation experience.
 

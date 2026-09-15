@@ -1,6 +1,7 @@
 local theme = require("user.ui.theme")
 local catppuccin = require("user.ui.themes.catppuccin")
 local icons = require("user.ui.icons")
+local snacks = require("user.ui.snacks")
 local gitsigns = require("user.ui.gitsigns")
 local statusline = require("user.ui.statusline")
 local which_key = require("user.ui.which-key")
@@ -24,6 +25,13 @@ theme.setup({
 -- ============================================================================
 
 icons.setup() -- Initialize the shared icon provider against the active theme.
+
+
+-- ============================================================================
+-- NOTIFICATIONS
+-- ============================================================================
+
+snacks.setup() -- Route standard notifications after theme and icons are ready.
 
 
 -- ============================================================================

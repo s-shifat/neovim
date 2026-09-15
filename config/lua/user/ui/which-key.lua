@@ -18,6 +18,7 @@ function M.setup()
 
   which_key.add({
     { "<leader>g", group = "Git" },
+    { "<leader>n", group = "Notifications" },
   })
 end
 

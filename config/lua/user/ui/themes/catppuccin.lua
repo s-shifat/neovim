@@ -79,6 +79,9 @@ function M.configure(name)
 
     integrations = {
       gitsigns = true, -- Use Catppuccin highlights for Git gutter signs.
+      snacks = {
+        enabled = true, -- Apply Catppuccin highlights to Snacks notifications.
+      },
       which_key = true, -- Apply Catppuccin highlights to the Which-Key popup.
     },
   })
