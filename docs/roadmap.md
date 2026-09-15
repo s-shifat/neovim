@@ -81,14 +81,14 @@ A stage may also contain smaller completed and remaining sub-stages.
 The latest completed editor milestone is:
 
 ```text
-Stage 7E — Notifications
+Stage 8A — Telescope Search Foundation
 ```
 
 The current editor-development target is:
 
 ```text
 Stage 8 — Navigation and Editor Workflow
-Stage 8A — Telescope Search Foundation
+Stage 8B — Daily File Explorer
 ```
 
 Exact source and deployed revisions should be determined from the current repositories rather than recorded here.
@@ -130,7 +130,15 @@ Catppuccin Mocha default
 
 nvim-web-devicons initialized centrally in the UI layer
 
+Which-Key leader-map discovery
+
 global Lualine statusline with restrained editor, Git, diagnostic, and LSP context
+
+Git gutter signs and buffer-local hunk actions
+
+Snacks-backed notifications with history and dismissal controls
+
+Telescope fuzzy search with distinct project-root and cwd scopes
 ```
 
 `nvim-web-devicons` is now part of the shared standalone Neovim plugin baseline. Consumer-specific icon behavior remains owned by the UI features that use it.
@@ -547,7 +555,7 @@ user/ui/icons.lua
 central UI-layer initialization after the colorscheme and before consumer plugins
 ```
 
-The provider uses upstream defaults. Consumer-specific icon behavior remains owned by future features such as the file explorer, buffer bar, Telescope results, or another navigation/UI component.
+The provider uses upstream defaults. Consumer-specific icon behavior remains owned by the UI features that consume it, currently including Lualine and Telescope and potentially later features such as the file explorer or buffer bar.
 
 The Nerd Font itself remains a host-system responsibility and is already supplied through the NixOS dotfiles.
 
@@ -572,7 +580,7 @@ dedicated user.ui.which-key configuration boundary
 
 existing keymap descriptions discovered without a duplicate registry
 
-mapping icons disabled without adding an icon dependency
+mapping icons disabled to keep mapping labels textual
 
 Catppuccin Which-Key integration enabled explicitly
 ```
@@ -629,7 +637,7 @@ Goal:
 
 > Add persistent lightweight Git change indicators and hunk interaction.
 
-Expected capabilities:
+Implemented capabilities:
 
 ```text
 Git gutter signs
@@ -653,7 +661,7 @@ Goal:
 
 > Provide visible but restrained notifications with inspectable history.
 
-Expected behavior:
+Implemented behavior:
 
 ```text
 small transient popup
@@ -698,7 +706,7 @@ Purpose:
 Telescope is the primary search/navigation UI. It is not being replaced by
 Snacks Picker.
 
-Planned Telescope foundation includes:
+The implemented Telescope foundation includes:
 
 ```text
 telescope.nvim
@@ -718,7 +726,7 @@ fd
 `ugrep` is not planned unless a concrete future limitation requires it. The
 `fzf` CLI is not required merely for `telescope-fzf-native`.
 
-Behavioral goals:
+Implemented behavior includes:
 
 ```text
 LunarVim-style Telescope interaction/layout
@@ -738,7 +746,8 @@ diagnostic search
 
 Resume as a first-class action
 
-preview available where useful and toggleable on demand
+preview enabled by default for context-heavy and file-oriented pickers
+Telescope-local preview toggling on demand
 
 vim.ui.select routed through Telescope
 ```
@@ -766,9 +775,10 @@ all-files/all-grep ignore overrides under `<leader>su`.
 
 Project search resolves the Git root when available and uses Git's candidate
 set with command-level exclusions; outside Git it falls back to `fd` at the
-cwd. General file search remains cwd-oriented. Ordinary file and grep commands
-include hidden files while excluding targeted cache/environment trees and
-common lock files before traversal/results reach Telescope.
+cwd. General file search remains cwd-oriented. Hidden files are included in
+ordinary file and grep searches, while ignore rules remain a separate scope
+boundary. Targeted cache/environment trees and common lock files are excluded
+before traversal/results reach Telescope.
 
 ### Search-Scope Policy
 
@@ -809,7 +819,7 @@ reachable without making that expensive scope the default.
 
 ## Stage 8B — Daily File Explorer
 
-**Status: PLANNED**
+**Status: CURRENT**
 
 The selected daily explorer direction is Snacks Explorer.
 
@@ -1636,9 +1646,9 @@ docs/references.md
 The expected near-term sequence is:
 
 ```text
-Stage 8A — Telescope Search Foundation
+Stage 8A — Telescope Search Foundation (COMPLETE)
         ↓
-Stage 8B — Daily File Explorer
+Stage 8B — Daily File Explorer (CURRENT)
         ↓
 Stage 8C — Oil On-Demand
         ↓
@@ -1696,6 +1706,9 @@ This order may be refined when a dependency relationship provides a concrete rea
 | 7D    | Git signs                          | COMPLETE    |
 | 7E    | Notifications                      | COMPLETE    |
 | 8     | Navigation/editor workflow         | **CURRENT** |
+| 8A    | Telescope search foundation        | COMPLETE    |
+| 8B    | Daily file explorer                | **CURRENT** |
+| 8C–8G | Remaining navigation workflow      | PLANNED     |
 | 9     | Treesitter / structural navigation | PLANNED     |
 | 10    | LSP foundation                     | PLANNED     |
 | 11    | Completion/snippets                | PLANNED     |

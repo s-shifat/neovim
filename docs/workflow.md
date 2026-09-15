@@ -656,6 +656,31 @@ should show a clean experiment worktree.
 
 Uncommitted experiments are development state, not promotion candidates.
 
+After human review and acceptance, explicit invocation of the repo-local
+`$neovim-promote` skill may perform this commit and promotion boundary:
+
+```text
+implementation
+        ↓
+human review / acceptance
+        ↓
+explicit $neovim-promote
+        ↓
+commit
+        ↓
+nvim-exp promote
+        ↓
+source-stable main
+        ↓
+stop
+```
+
+The skill is a convenience wrapper around the accepted workflow, not a second
+promotion mechanism. `nvim-exp promote` remains the authoritative mechanical
+validation and promotion gate. Push and deployment remain separate explicit
+actions, and the skill does not authorize discard, dotfiles pin changes, or
+unrelated edits.
+
 ---
 
 # 17. `nvim-exp promote`
@@ -1256,4 +1281,3 @@ REVIEW THE DIFF.
 PROMOTE DELIBERATELY.
 DEPLOY SEPARATELY.
 ```
-

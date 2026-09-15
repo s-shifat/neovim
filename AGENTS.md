@@ -153,6 +153,12 @@ Without explicit ticket authorization, do not:
 - switch or otherwise deploy production;
 - deliberately revise an established architectural invariant.
 
+Explicit invocation of the repo-local `$neovim-promote` skill is the narrow
+exception for an active experiment that the user has already accepted. It
+authorizes committing that experiment and running `nvim-exp promote` according
+to the skill. It does not authorize push, dotfiles pin changes, deployment,
+discard, or unrelated edits.
+
 Never:
 
 - install editor dependencies at runtime;
