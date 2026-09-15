@@ -81,13 +81,13 @@ A stage may also contain smaller completed and remaining sub-stages.
 The latest completed editor milestone is:
 
 ```text
-Stage 7B — which-key
+Stage 7C — Statusline
 ```
 
 The current editor-development target is:
 
 ```text
-Stage 7C — Statusline
+Stage 7D — Git Signs
 ```
 
 Exact source and deployed revisions should be determined from the current repositories rather than recorded here.
@@ -128,6 +128,8 @@ generic colorscheme infrastructure
 Catppuccin Mocha default
 
 nvim-web-devicons initialized centrally in the UI layer
+
+global Lualine statusline with restrained editor, Git, diagnostic, and LSP context
 ```
 
 `nvim-web-devicons` is now part of the shared standalone Neovim plugin baseline. Consumer-specific icon behavior remains owned by the UI features that use it.
@@ -582,27 +584,35 @@ Testing should protect startup/integration invariants rather than exact popup ap
 
 ## Stage 7C — Statusline
 
-**Status: CURRENT**
+**Status: COMPLETE**
 
 Goal:
 
 > Provide useful persistent status with moderate information density.
 
-Expected behavior:
+Implemented one global Lualine statusline with:
 
 ```text
-mode/status information
+mode
 
-file/buffer context
+Git branch
 
-Git information where appropriate
+built-in diagnostic severity counts
 
-diagnostic summary where appropriate
+relative file path with modified/read-only state
 
-compact LSP indicator
+filetype and icon
 
-minimal persistent clutter
+compact LSP attachment indicator
+
+file progress
+
+line and column location
 ```
+
+Lualine follows the active colorscheme automatically and uses the centrally initialized `nvim-web-devicons` provider. Native `showmode` is disabled only after Lualine initializes successfully, preserving mode feedback if the optional UI layer is unavailable.
+
+The LSP component stays empty until a client is attached to the current buffer, then reports only `LSP` rather than persistent server names.
 
 Avoid turning the statusline into a full system-debug dashboard.
 
@@ -612,7 +622,7 @@ Detailed operational information belongs in the later health interface.
 
 ## Stage 7D — Git Signs
 
-**Status: PLANNED**
+**Status: CURRENT**
 
 Goal:
 
@@ -1359,8 +1369,6 @@ docs/references.md
 The expected near-term sequence is:
 
 ```text
-Stage 7C — statusline
-        ↓
 Stage 7D — Git signs
         ↓
 Stage 7E — notifications
@@ -1407,8 +1415,8 @@ This order may be refined when a dependency relationship provides a concrete rea
 | 6 fix | Yank-highlight regression          | COMPLETE    |
 | 7A    | Theme foundation                   | COMPLETE    |
 | 7B    | which-key                          | COMPLETE    |
-| 7C    | Statusline                         | **CURRENT** |
-| 7D    | Git signs                          | PLANNED     |
+| 7C    | Statusline                         | COMPLETE    |
+| 7D    | Git signs                          | **CURRENT** |
 | 7E    | Notifications                      | PLANNED     |
 | 8     | Navigation/editor workflow         | PLANNED     |
 | 9     | Treesitter                         | PLANNED     |

@@ -1,6 +1,7 @@
 local theme = require("user.ui.theme")
 local catppuccin = require("user.ui.themes.catppuccin")
 local icons = require("user.ui.icons")
+local statusline = require("user.ui.statusline")
 local which_key = require("user.ui.which-key")
 
 
@@ -22,6 +23,13 @@ theme.setup({
 -- ============================================================================
 
 icons.setup() -- Initialize the shared icon provider against the active theme.
+
+
+-- ============================================================================
+-- STATUSLINE
+-- ============================================================================
+
+statusline.setup() -- Replace native mode feedback only after Lualine initializes.
 
 
 -- ============================================================================

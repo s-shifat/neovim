@@ -116,6 +116,19 @@ if devicons.has_loaded() ~= true then
   fail("nvim-web-devicons was not initialized during UI startup")
 end
 
+-- Verify that the packaged statusline initialized and replaced native mode text.
+if package.loaded.lualine == nil then
+  fail("Lualine was not initialized during UI startup")
+end
+
+if vim.o.showmode then
+  fail("native showmode remained enabled after Lualine initialized")
+end
+
+if vim.o.laststatus ~= 3 then
+  fail("Lualine did not configure one global statusline")
+end
+
 -- Exercise core TextYankPost behavior so broken autocmd callbacks fail the smoke test.
 local yank_ok, yank_err = pcall(function()
   vim.api.nvim_buf_set_lines(
