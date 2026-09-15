@@ -1,0 +1,7 @@
+interface:
+  display_name: "Neovim Promote"
+  short_description: "Commit and promote an accepted experiment"
+  default_prompt: "Promote the currently active, already reviewed Neovim experiment."
+
+policy:
+  allow_implicit_invocation: false
