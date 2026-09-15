@@ -681,10 +681,11 @@ three-second default timeout, wrapped long messages, non-focusable transient
 windows, session-local history, and mappings to inspect history or dismiss
 visible notifications.
 
-Only the notifier lifecycle is enabled. Snacks modules with automatic setup
-lifecycles remain explicitly disabled, while its on-demand utilities receive
-no configuration or mappings. Catppuccin owns the notification highlights and
-Which-Key identifies the notification mapping namespace.
+Explorer and its required Picker infrastructure are enabled alongside the
+notifier as of Stage 8B. Unrelated Snacks modules with automatic setup
+lifecycles remain explicitly disabled, while its other on-demand utilities
+receive no configuration or mappings. Catppuccin owns the notification
+highlights and Which-Key identifies the notification mapping namespace.
 
 ---
 
@@ -819,7 +820,7 @@ reachable without making that expensive scope the default.
 
 ## Stage 8B — Daily File Explorer
 
-**Status: CURRENT**
+**Status: COMPLETE**
 
 The selected daily explorer direction is Snacks Explorer.
 
@@ -848,9 +849,26 @@ Telescope
 Installing Snacks Explorer must not redefine Snacks Picker as the project's
 primary search interface.
 
+The implemented Explorer uses a persistent 40-column left sidebar rooted at
+the Git repository root, or cwd outside Git. Standalone `<leader>e` provides
+contextual open/focus/close behavior. The open tree follows normal buffer
+changes without opening itself, and selecting a file returns focus to the
+editing area while leaving the tree available.
+
+Hidden and Git-ignored entries are visible by default, intentionally distinct
+from Telescope's curated search scope. Icons, Git state, diagnostics, file
+watching, and standard create/rename/delete/move/copy actions use Snacks'
+Explorer support. The supported netrw replacement makes Explorer the normal
+directory UI, including `nvim .`.
+
+Picker is enabled only because Explorer requires it. No general Snacks file,
+grep, buffer, recent-file, or smart-search mappings were introduced, and the
+Explorer-local Picker grep and terminal bindings are disabled. Stage 8A's
+Telescope configuration and `<leader>s...` namespace are unchanged.
+
 ## Stage 8C — Oil On-Demand
 
-**Status: PLANNED**
+**Status: CURRENT**
 
 Oil.nvim is planned as a secondary, on-demand filesystem editing tool. It does
 not replace Snacks Explorer and should not take over normal directory opening
@@ -1648,9 +1666,9 @@ The expected near-term sequence is:
 ```text
 Stage 8A — Telescope Search Foundation (COMPLETE)
         ↓
-Stage 8B — Daily File Explorer (CURRENT)
+Stage 8B — Daily File Explorer (COMPLETE)
         ↓
-Stage 8C — Oil On-Demand
+Stage 8C — Oil On-Demand (CURRENT)
         ↓
 Stage 8D — Browser-Like Buffer Bar
         ↓
@@ -1707,8 +1725,9 @@ This order may be refined when a dependency relationship provides a concrete rea
 | 7E    | Notifications                      | COMPLETE    |
 | 8     | Navigation/editor workflow         | **CURRENT** |
 | 8A    | Telescope search foundation        | COMPLETE    |
-| 8B    | Daily file explorer                | **CURRENT** |
-| 8C–8G | Remaining navigation workflow      | PLANNED     |
+| 8B    | Daily file explorer                | COMPLETE    |
+| 8C    | Oil on-demand                      | **CURRENT** |
+| 8D–8G | Remaining navigation workflow      | PLANNED     |
 | 9     | Treesitter / structural navigation | PLANNED     |
 | 10    | LSP foundation                     | PLANNED     |
 | 11    | Completion/snippets                | PLANNED     |

@@ -17,8 +17,8 @@ function M.setup()
     return
   end
 
-  local setup_ok, setup_error = pcall(snacks.setup, {
-    -- The notifier is the only Snacks feature authorized for Stage 7E.
+  local explorer = require("user.navigation.explorer").snacks_config()
+  local setup_ok, setup_error = pcall(snacks.setup, vim.tbl_deep_extend("force", {
     notifier = {
       enabled = true,
       timeout = 3000,
@@ -35,21 +35,19 @@ function M.setup()
       },
     },
 
-    -- These modules have automatic setup lifecycles and remain off. Other
+    -- Unused modules with automatic setup lifecycles remain off. Other
     -- Snacks utilities (terminal, lazygit, gitbrowse, scratch, and zen) are
-    -- on-demand only and receive no mappings or configuration in this stage.
+    -- on-demand only and receive no mappings or configuration.
     bigfile = { enabled = false },
     dashboard = { enabled = false },
-    explorer = { enabled = false },
     indent = { enabled = false },
     input = { enabled = false },
-    picker = { enabled = false },
     quickfile = { enabled = false },
     scope = { enabled = false },
     scroll = { enabled = false },
     statuscolumn = { enabled = false },
     words = { enabled = false },
-  })
+  }, explorer))
 
   if not setup_ok then
     vim.notify = native_notify

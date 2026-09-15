@@ -175,8 +175,8 @@ for _, executable in ipairs({ "rg", "fd" }) do
   end
 end
 
--- Verify that Snacks owns the standard notification route and only its notifier
--- lifecycle was enabled during normal UI startup.
+-- Verify that Snacks owns notifications and provides the Stage 8B Explorer
+-- without enabling unrelated automatic modules.
 local snacks_ok, snacks = pcall(require, "snacks")
 
 if not snacks_ok then
@@ -191,6 +191,42 @@ if snacks.config.notifier.enabled ~= true then
   fail("Snacks notifier is not enabled")
 end
 
+if snacks.config.explorer.enabled ~= true then
+  fail("Snacks Explorer is not enabled")
+end
+
+if snacks.config.explorer.replace_netrw ~= true then
+  fail("Snacks Explorer does not own directory opening")
+end
+
+if snacks.config.picker.enabled ~= true then
+  fail("Snacks Picker infrastructure is not enabled for Explorer")
+end
+
+local explorer_config = snacks.config.picker.sources.explorer
+
+if explorer_config.focus ~= "list" then
+  fail("Snacks Explorer does not initially focus its interactive list")
+end
+
+for _, option in ipairs({ "hidden", "ignored", "follow_file", "git_status", "diagnostics" }) do
+  if explorer_config[option] ~= true then
+    fail("Snacks Explorer option is not enabled: " .. option)
+  end
+end
+
+if explorer_config.auto_close ~= false or explorer_config.jump.close ~= false then
+  fail("Snacks Explorer is not configured to remain open while editing")
+end
+
+if vim.fn.maparg("<leader>e", "n") == "" then
+  fail("Snacks Explorer mapping is unavailable: <leader>e")
+end
+
+if vim.fn.maparg("<leader>er", "n") ~= "" then
+  fail("Snacks Explorer exposes an unexpected <leader>er child mapping")
+end
+
 vim.notify("notification smoke test", vim.log.levels.INFO)
 
 if vim.notify ~= snacks.notifier.notify then
@@ -200,10 +236,8 @@ end
 for _, module in ipairs({
   "bigfile",
   "dashboard",
-  "explorer",
   "indent",
   "input",
-  "picker",
   "quickfile",
   "scope",
   "scroll",
@@ -231,6 +265,7 @@ local yank_ok, yank_err = pcall(function()
   vim.cmd("normal! gg")
   vim.cmd("normal! yy") -- Trigger TextYankPost for a real yank.
   vim.cmd("normal! dd") -- Trigger TextYankPost for a real delete.
+  vim.bo.modified = false
 end)
 
 if not yank_ok then

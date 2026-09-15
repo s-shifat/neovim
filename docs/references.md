@@ -427,6 +427,21 @@ does not require the `fzf` command-line executable.
 
 ---
 
+## Stage 8B Snacks Explorer
+
+The daily file explorer uses the already packaged Snacks dependency:
+
+```text
+https://github.com/folke/snacks.nvim/blob/main/docs/explorer.md
+```
+
+This is the implementation reference for Explorer options, filesystem actions,
+directory replacement, Git/diagnostic context, and its internal Picker
+dependency. Repository behavior remains authoritative, and enabling Picker for
+Explorer does not make Snacks Picker a general search interface.
+
+---
+
 # 11. Behavioral Reference Policy
 
 Behavioral reference precedence and the detailed behavioral research sequence are defined in:

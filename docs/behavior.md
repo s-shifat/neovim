@@ -839,6 +839,25 @@ replaceability
 basic editing does not depend on the explorer
 ```
 
+Snacks Explorer is the daily project tree. `<leader>e` opens it at the Git
+repository root (or cwd outside Git), focuses it when it is already open, and
+closes it when it is focused. It is a standalone mapping rather than an
+Explorer namespace. The tree stays open after a file is selected, returns focus
+to the editing window, and follows ordinary buffer navigation only while it is
+already open.
+
+The Explorer is a complete filesystem view: hidden and Git-ignored entries are
+shown by default. Its upstream toggles may temporarily narrow either category,
+but Telescope's curated ordinary-search exclusions do not apply to the tree.
+The left sidebar includes icons, Git status, diagnostics, and the standard
+Snacks create, rename, delete, move, and copy operations. Snacks Explorer also
+owns normal directory opening, including `nvim .`, through its supported netrw
+replacement mechanism.
+
+Snacks Picker is enabled only as Explorer infrastructure. Explorer-local
+Picker grep and terminal shortcuts are disabled, and the established
+Telescope `<leader>s...` workflow remains the user-facing search system.
+
 Neither interface should be so deeply coupled to other configuration that
 replacing it becomes difficult. Basic fallback file navigation should remain
 usable.
