@@ -1,5 +1,45 @@
 local M = {}
 
+local base_config = {
+  notifier = {
+    enabled = true,
+    timeout = 3000,
+    style = "compact",
+    top_down = true,
+  },
+
+  styles = {
+    notification = {
+      focusable = false,
+      wo = {
+        wrap = true,
+      },
+    },
+  },
+
+  -- Unused modules with automatic setup lifecycles remain off. Other
+  -- Snacks utilities (terminal, lazygit, gitbrowse, scratch, and zen) are
+  -- on-demand only and receive no mappings or configuration.
+  bigfile = { enabled = false },
+  dashboard = { enabled = false },
+  indent = { enabled = false },
+  input = { enabled = false },
+  quickfile = { enabled = false },
+  scope = { enabled = false },
+  scroll = { enabled = false },
+  statuscolumn = { enabled = false },
+  words = { enabled = false },
+}
+
+local function make_config(explorer, image)
+  return vim.tbl_deep_extend(
+    "force",
+    base_config,
+    explorer,
+    image
+  )
+end
+
 
 -- ============================================================================
 -- SNACKS NOTIFICATIONS
@@ -21,36 +61,8 @@ function M.setup()
   local image_view = require("user.ui.image")
   local image = image_view.snacks_config()
   image_view.setup()
-  local setup_ok, setup_error = pcall(snacks.setup, vim.tbl_deep_extend("force", {
-    notifier = {
-      enabled = true,
-      timeout = 3000,
-      style = "compact",
-      top_down = true,
-    },
-
-    styles = {
-      notification = {
-        focusable = false,
-        wo = {
-          wrap = true,
-        },
-      },
-    },
-
-    -- Unused modules with automatic setup lifecycles remain off. Other
-    -- Snacks utilities (terminal, lazygit, gitbrowse, scratch, and zen) are
-    -- on-demand only and receive no mappings or configuration.
-    bigfile = { enabled = false },
-    dashboard = { enabled = false },
-    indent = { enabled = false },
-    input = { enabled = false },
-    quickfile = { enabled = false },
-    scope = { enabled = false },
-    scroll = { enabled = false },
-    statuscolumn = { enabled = false },
-    words = { enabled = false },
-  }, explorer, image))
+  local config = make_config(explorer, image)
+  local setup_ok, setup_error = pcall(snacks.setup, config)
 
   if not setup_ok then
     vim.notify = native_notify

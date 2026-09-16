@@ -1,13 +1,5 @@
 local M = {}
 
-local uv = vim.uv or vim.loop
-local watchers = {}
-local fingerprint_timers = {}
-local pending_restores = {}
-local stop_fingerprint_timer
-local DEBOUNCE_MS = 150
-local MISSING_RETRIES = 6
-local VIEWER_MARKER = "user_snacks_image_viewer"
 local FORMATS = {
   "png",
   "jpg",
@@ -20,6 +12,35 @@ local FORMATS = {
   "avif",
   "pdf",
 }
+
+local config = {
+  image = {
+    enabled = true,
+    formats = FORMATS,
+    force = false,
+    doc = {
+      enabled = false,
+      inline = false,
+      float = false,
+    },
+    math = {
+      enabled = false,
+    },
+    convert = {
+      notify = true,
+    },
+  },
+}
+
+local DEBOUNCE_MS = 150
+local MISSING_RETRIES = 6
+local VIEWER_MARKER = "user_snacks_image_viewer"
+
+local uv = vim.uv or vim.loop
+local watchers = {}
+local fingerprint_timers = {}
+local pending_restores = {}
+local stop_fingerprint_timer
 
 
 function M.is_viewer(buf)
@@ -459,24 +480,7 @@ end
 
 
 function M.snacks_config()
-  return {
-    image = {
-      enabled = true,
-      formats = FORMATS,
-      force = false,
-      doc = {
-        enabled = false,
-        inline = false,
-        float = false,
-      },
-      math = {
-        enabled = false,
-      },
-      convert = {
-        notify = true,
-      },
-    },
-  }
+  return vim.deepcopy(config)
 end
 
 

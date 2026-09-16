@@ -1,39 +1,7 @@
 local M = {}
 
-local warned = false
-
-local function warn_once(message)
-  if warned then
-    return
-  end
-
-  warned = true
-  vim.schedule(function()
-    vim.notify("Telescope: " .. message, vim.log.levels.WARN)
-  end)
-end
-
-local function load_extension(telescope, name)
-  local ok, err = pcall(telescope.load_extension, name)
-
-  if not ok then
-    warn_once(("could not load the %s extension: %s"):format(name, err))
-  end
-end
-
-function M.setup()
-  local ok, telescope = pcall(require, "telescope")
-
-  if not ok then
-    warn_once("could not initialize; basic editing remains available")
-    return
-  end
-
-  local actions = require("telescope.actions")
-  local action_layout = require("telescope.actions.layout")
-  local themes = require("telescope.themes")
-
-  local setup_ok, setup_error = pcall(telescope.setup, {
+local function make_config(actions, action_layout, themes)
+  return {
     defaults = {
       initial_mode = "insert",
       path_display = { "smart" },
@@ -90,7 +58,44 @@ function M.setup()
       },
       ["ui-select"] = themes.get_dropdown({ previewer = false }),
     },
-  })
+  }
+end
+
+local warned = false
+
+local function warn_once(message)
+  if warned then
+    return
+  end
+
+  warned = true
+  vim.schedule(function()
+    vim.notify("Telescope: " .. message, vim.log.levels.WARN)
+  end)
+end
+
+local function load_extension(telescope, name)
+  local ok, err = pcall(telescope.load_extension, name)
+
+  if not ok then
+    warn_once(("could not load the %s extension: %s"):format(name, err))
+  end
+end
+
+function M.setup()
+  local ok, telescope = pcall(require, "telescope")
+
+  if not ok then
+    warn_once("could not initialize; basic editing remains available")
+    return
+  end
+
+  local actions = require("telescope.actions")
+  local action_layout = require("telescope.actions.layout")
+  local themes = require("telescope.themes")
+
+  local config = make_config(actions, action_layout, themes)
+  local setup_ok, setup_error = pcall(telescope.setup, config)
 
   if not setup_ok then
     warn_once("setup failed: " .. tostring(setup_error))

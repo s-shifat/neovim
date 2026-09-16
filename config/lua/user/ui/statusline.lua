@@ -25,6 +25,41 @@ local function git_diff()
   }
 end
 
+local config = {
+  options = {
+    theme = "auto",
+    globalstatus = true,
+  },
+
+  sections = {
+    lualine_a = { "mode" },
+
+    lualine_b = {
+      "branch",
+      {
+        "diff",
+        source = git_diff,
+      },
+      "diagnostics",
+    },
+
+    lualine_c = {
+      {
+        "filename",
+        path = 1,
+      },
+    },
+
+    lualine_x = {
+      "filetype",
+      lsp_status,
+    },
+
+    lualine_y = { "progress" },
+    lualine_z = { "location" },
+  },
+}
+
 local function warn_once(message)
   vim.notify_once(
     message,
@@ -46,40 +81,7 @@ function M.setup()
     return
   end
 
-  local configured, setup_err = pcall(lualine.setup, {
-    options = {
-      theme = "auto",
-      globalstatus = true,
-    },
-
-    sections = {
-      lualine_a = { "mode" },
-
-      lualine_b = {
-        "branch",
-        {
-          "diff",
-          source = git_diff,
-        },
-        "diagnostics",
-      },
-
-      lualine_c = {
-        {
-          "filename",
-          path = 1,
-        },
-      },
-
-      lualine_x = {
-        "filetype",
-        lsp_status,
-      },
-
-      lualine_y = { "progress" },
-      lualine_z = { "location" },
-    },
-  })
+  local configured, setup_err = pcall(lualine.setup, config)
 
   if not configured then
     warn_once(

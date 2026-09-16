@@ -1,5 +1,13 @@
 local M = {}
 
+local config = {
+  default_file_explorer = false,
+  float = {
+    max_width = 0.80,
+    max_height = 0.75,
+  },
+}
+
 local initialized = false
 local initialization_count = 0
 
@@ -18,13 +26,7 @@ local function ensure_oil()
     return
   end
 
-  local setup_ok, setup_error = pcall(oil.setup, {
-    default_file_explorer = false,
-    float = {
-      max_width = 0.80,
-      max_height = 0.75,
-    },
-  })
+  local setup_ok, setup_error = pcall(oil.setup, config)
 
   if not setup_ok then
     notify("filesystem editor setup failed: " .. tostring(setup_error))

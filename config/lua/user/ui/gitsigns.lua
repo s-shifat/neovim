@@ -49,6 +49,21 @@ local function attach_mappings(gitsigns, bufnr)
   end, "Reset selected Git hunk")
 end
 
+local function make_config(gitsigns)
+  return {
+    signcolumn = true,
+    signs_staged_enable = true,
+    numhl = false,
+    linehl = false,
+    word_diff = false,
+    current_line_blame = false,
+
+    on_attach = function(bufnr)
+      attach_mappings(gitsigns, bufnr)
+    end,
+  }
+end
+
 
 -- ============================================================================
 -- GIT SIGNS SETUP
@@ -62,18 +77,8 @@ function M.setup()
     return
   end
 
-  local configured, setup_err = pcall(gitsigns.setup, {
-    signcolumn = true,
-    signs_staged_enable = true,
-    numhl = false,
-    linehl = false,
-    word_diff = false,
-    current_line_blame = false,
-
-    on_attach = function(bufnr)
-      attach_mappings(gitsigns, bufnr)
-    end,
-  })
+  local config = make_config(gitsigns)
+  local configured, setup_err = pcall(gitsigns.setup, config)
 
   if not configured then
     warn_once(

@@ -1,5 +1,60 @@
 local M = {}
 
+local config = {
+  -- --------------------------------------------------------------------------
+  -- BACKGROUND AND TERMINAL COLORS
+  -- --------------------------------------------------------------------------
+
+  transparent_background = false, -- Keep normal editor windows fully opaque.
+
+  float = {
+    transparent = false, -- Keep floating windows opaque as well.
+  },
+
+  term_colors = false, -- Do not replace the terminal's ANSI color palette.
+
+
+  -- --------------------------------------------------------------------------
+  -- INACTIVE WINDOWS
+  -- --------------------------------------------------------------------------
+
+  dim_inactive = {
+    enabled = false, -- Keep inactive splits at normal brightness.
+  },
+
+
+  -- --------------------------------------------------------------------------
+  -- TEXT STYLING
+  -- --------------------------------------------------------------------------
+
+  no_italic = false, -- Allow Catppuccin to use italic highlight styles.
+  no_bold = false, -- Allow Catppuccin to use bold highlight styles.
+  no_underline = false, -- Allow Catppuccin to use underline highlight styles.
+
+  styles = {
+    comments = { "italic" }, -- Display comments in italics like the historical setup.
+    conditionals = { "italic" }, -- Display conditionals in italics like the historical setup.
+  },
+
+
+  -- --------------------------------------------------------------------------
+  -- PLUGIN INTEGRATIONS
+  -- --------------------------------------------------------------------------
+
+  auto_integrations = false, -- Never silently enable integrations based on detected plugins.
+
+  integrations = {
+    gitsigns = true, -- Use Catppuccin highlights for Git gutter signs.
+    snacks = {
+      enabled = true, -- Apply Catppuccin highlights to Snacks notifications.
+    },
+    telescope = {
+      enabled = true, -- Apply Catppuccin highlights to Telescope pickers.
+    },
+    which_key = true, -- Apply Catppuccin highlights to the Which-Key popup.
+  },
+}
+
 local configured = false
 
 
@@ -34,60 +89,7 @@ function M.configure(name)
     )
   end
 
-  catppuccin.setup({
-    -- ------------------------------------------------------------------------
-    -- BACKGROUND AND TERMINAL COLORS
-    -- ------------------------------------------------------------------------
-
-    transparent_background = false, -- Keep normal editor windows fully opaque.
-
-    float = {
-      transparent = false, -- Keep floating windows opaque as well.
-    },
-
-    term_colors = false, -- Do not replace the terminal's ANSI color palette.
-
-
-    -- ------------------------------------------------------------------------
-    -- INACTIVE WINDOWS
-    -- ------------------------------------------------------------------------
-
-    dim_inactive = {
-      enabled = false, -- Keep inactive splits at normal brightness.
-    },
-
-
-    -- ------------------------------------------------------------------------
-    -- TEXT STYLING
-    -- ------------------------------------------------------------------------
-
-    no_italic = false, -- Allow Catppuccin to use italic highlight styles.
-    no_bold = false, -- Allow Catppuccin to use bold highlight styles.
-    no_underline = false, -- Allow Catppuccin to use underline highlight styles.
-
-    styles = {
-      comments = { "italic" }, -- Display comments in italics like the historical setup.
-      conditionals = { "italic" }, -- Display conditionals in italics like the historical setup.
-    },
-
-
-    -- ------------------------------------------------------------------------
-    -- PLUGIN INTEGRATIONS
-    -- ------------------------------------------------------------------------
-
-    auto_integrations = false, -- Never silently enable integrations based on detected plugins.
-
-    integrations = {
-      gitsigns = true, -- Use Catppuccin highlights for Git gutter signs.
-      snacks = {
-        enabled = true, -- Apply Catppuccin highlights to Snacks notifications.
-      },
-      telescope = {
-        enabled = true, -- Apply Catppuccin highlights to Telescope pickers.
-      },
-      which_key = true, -- Apply Catppuccin highlights to the Which-Key popup.
-    },
-  })
+  catppuccin.setup(config)
 
   configured = true
 end
