@@ -51,8 +51,11 @@ function M.snacks_config()
           win = {
             list = {
               keys = {
+                ["<S-CR>"] = { { "pick_win", "jump" } },
                 ["<leader>/"] = false,
                 ["<c-t>"] = false,
+                B = "edit_split",
+                V = "edit_vsplit",
               },
             },
           },

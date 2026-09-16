@@ -854,6 +854,11 @@ Snacks create, rename, delete, move, and copy operations. Snacks Explorer also
 owns normal directory opening, including `nvim .`, through its supported netrw
 replacement mechanism.
 
+Explorer-local `V` and `B` open the selected file in vertical and horizontal
+splits respectively. `<S-CR>` uses Snacks' native window picker to choose an
+eligible target window before opening the selection. These do not replace
+lowercase `v` or `b`, or the corresponding keys in ordinary editor buffers.
+
 Snacks Picker is enabled only as Explorer infrastructure. Explorer-local
 Picker grep and terminal shortcuts are disabled, and the established
 Telescope `<leader>s...` workflow remains the user-facing search system.

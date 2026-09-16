@@ -438,6 +438,21 @@ if explorer_config.auto_close ~= false or explorer_config.jump.close ~= false th
   fail("Snacks Explorer is not configured to remain open while editing")
 end
 
+local explorer_keys = explorer_config.win.list.keys
+if explorer_keys.V ~= "edit_vsplit" or explorer_keys.B ~= "edit_split" then
+  fail("Snacks Explorer split mappings are unavailable")
+end
+
+if not vim.deep_equal(explorer_keys["<S-CR>"], { { "pick_win", "jump" } }) then
+  fail("Snacks Explorer window-picker mapping is unavailable")
+end
+
+for _, key in ipairs({ "V", "B", "<S-CR>" }) do
+  if vim.fn.maparg(key, "n") ~= "" then
+    fail("Snacks Explorer mapping leaked globally: " .. key)
+  end
+end
+
 if vim.fn.maparg("<leader>e", "n") == "" then
   fail("Snacks Explorer mapping is unavailable: <leader>e")
 end
