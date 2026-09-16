@@ -76,7 +76,7 @@ Detailed policy  → docs/
 - Keep this repository independent of dotfiles and host-specific configuration.
 - Verify native Neovim APIs against the version actually packaged by this repository; do not assume `master` APIs exist.
 - Keep one coherent task per experiment.
-- Follow existing file style. Keep plugin-backed configuration outside the plugin-free core where practical, and give user-facing mappings useful `desc` values.
+- Follow `docs/code-conventions.md` for implementation style, plugin-module layout, configuration placement, and code-organization conventions. Where that document is silent, follow the existing local file style. Keep plugin-backed configuration outside the plugin-free core where practical, and give user-facing mappings useful `desc` values.
 - Current ticket/project decisions override historical references.
 
 ## Orchestration
@@ -93,6 +93,7 @@ Read docs progressively. Search (`rg`, targeted reads) for relevant sections fir
 
 ```text
 docs/architecture.md       architecture / ownership / packaging
+docs/code-conventions.md   implementation style / module layout / plugin configuration
 docs/behavior.md           UX / mappings / historical behavior
 docs/workflow.md           experiments / promotion / agent workflow
 docs/testing.md            testing policy
@@ -102,13 +103,14 @@ docs/roadmap.md            current stage / scope / sequencing
 docs/references.md         historical and upstream sources
 ```
 
+Do not open every project document merely to prove that it needs no change.
+
 If work crosses one of these concerns, consult its owning document before deciding.
 
 For roadmap feature work, establish the relevant stage context first.
 
 For user-facing behavior changes, consult `docs/behavior.md`. Use historical sources only when behavior is ambiguous, being reconstructed, or explicitly relevant.
 
-Do not open every project document merely to prove that it needs no change.
 
 ## Definition of Done
 
