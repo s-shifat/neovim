@@ -169,9 +169,9 @@ if vim.g.neovim_telescope_loaded ~= true then
 end
 
 
-for _, executable in ipairs({ "rg", "fd" }) do
+for _, executable in ipairs({ "rg", "fd", "magick", "gs" }) do
   if vim.fn.executable(executable) ~= 1 then
-    fail(("Telescope backend '%s' is unavailable"):format(executable))
+    fail(("required executable '%s' is unavailable"):format(executable))
   end
 end
 
@@ -202,6 +202,225 @@ end
 if snacks.config.picker.enabled ~= true then
   fail("Snacks Picker infrastructure is not enabled for Explorer")
 end
+
+if snacks.config.image.enabled ~= true then
+  fail("Snacks image viewing is not enabled")
+end
+
+local image_formats = {
+  "png",
+  "jpg",
+  "jpeg",
+  "gif",
+  "bmp",
+  "webp",
+  "tiff",
+  "heic",
+  "avif",
+  "pdf",
+}
+
+if not vim.deep_equal(snacks.config.image.formats, image_formats) then
+  fail("Snacks image formats differ from the supported direct-file scope")
+end
+
+if snacks.config.image.force ~= false then
+  fail("Snacks image terminal detection is being forced")
+end
+
+if snacks.config.image.doc.enabled ~= false
+  or snacks.config.image.doc.inline ~= false
+  or snacks.config.image.doc.float ~= false
+  or snacks.config.image.math.enabled ~= false
+then
+  fail("Snacks document or math image rendering is unexpectedly enabled")
+end
+
+if snacks.config.image.convert.notify ~= true then
+  fail("Snacks image conversion failures will not notify the user")
+end
+
+local image_view = require("user.ui.image")
+if type(image_view.setup) ~= "function"
+  or type(image_view.watch) ~= "function"
+  or type(image_view.stop) ~= "function"
+  or type(image_view.prepare_source) ~= "function"
+  or type(image_view.invalidate_snacks_cache) ~= "function"
+  or type(image_view.record_fingerprint_when_ready) ~= "function"
+  or type(image_view.is_viewer) ~= "function"
+  or type(image_view.mark_viewer) ~= "function"
+  or type(image_view.normalize_viewer) ~= "function"
+  or type(image_view.handle_external_change) ~= "function"
+  or type(image_view.existing_placements) ~= "function"
+  or type(image_view.restore_placement) ~= "function"
+  or type(image_view.queue_placement_restore) ~= "function"
+  or image_view.active_watchers() ~= 0
+then
+  fail("Snacks direct image live-refresh lifecycle is unavailable")
+end
+
+local image_refresh_autocmds = vim.api.nvim_get_autocmds({
+  group = "user.image_live_refresh",
+})
+if #image_refresh_autocmds < 3 then
+  fail("Snacks direct image live-refresh autocmds are unavailable")
+end
+
+local fingerprint_source = vim.fn.tempname() .. ".png"
+vim.fn.writefile({ "first" }, fingerprint_source)
+local first_fingerprint = image_view.fingerprint(fingerprint_source)
+if not first_fingerprint
+  or not image_view.same_fingerprint(first_fingerprint, first_fingerprint)
+  or image_view.same_fingerprint(first_fingerprint, nil)
+then
+  fail("Snacks image source fingerprint comparison is unavailable")
+end
+vim.fn.writefile({ "different-size" }, fingerprint_source)
+local changed_fingerprint = image_view.fingerprint(fingerprint_source)
+if image_view.same_fingerprint(first_fingerprint, changed_fingerprint) then
+  fail("Snacks image source fingerprint did not detect a changed file")
+end
+if image_view.read_fingerprint(fingerprint_source) ~= nil then
+  fail("Missing Snacks image fingerprint state was not handled safely")
+end
+local malformed_path = image_view.fingerprint_path(fingerprint_source)
+vim.fn.mkdir(vim.fs.dirname(malformed_path), "p")
+vim.fn.writefile({ "not json" }, malformed_path)
+if image_view.read_fingerprint(fingerprint_source) ~= nil then
+  fail("Malformed Snacks image fingerprint state was not handled safely")
+end
+vim.fn.delete(malformed_path)
+vim.fn.delete(fingerprint_source)
+
+local watched_image = vim.fn.tempname() .. ".png"
+vim.fn.writefile({ "not-rendered-by-this-structural-test" }, watched_image)
+local watched_buf = vim.api.nvim_create_buf(true, false)
+vim.api.nvim_buf_set_name(watched_buf, watched_image)
+vim.api.nvim_set_current_buf(watched_buf)
+vim.bo[watched_buf].filetype = "image"
+if not image_view.is_viewer(watched_buf)
+  or vim.bo[watched_buf].autoread
+  or vim.bo[watched_buf].modifiable
+  or vim.bo[watched_buf].modified
+then
+  fail("Snacks direct image buffer does not have view-only semantics")
+end
+vim.bo[watched_buf].modified = true
+image_view.normalize_viewer(watched_buf)
+if vim.bo[watched_buf].modified then
+  fail("Snacks direct image buffer retained programmatic modifications")
+end
+local viewer_change_handlers = vim.api.nvim_get_autocmds({
+  event = "FileChangedShell",
+  buffer = watched_buf,
+})
+if #viewer_change_handlers ~= 1 then
+  fail("Snacks direct image buffer lacks a scoped external-change handler")
+end
+local viewer_enter_handlers = vim.api.nvim_get_autocmds({
+  event = "BufWinEnter",
+  buffer = watched_buf,
+})
+if #viewer_enter_handlers < 1 then
+  fail("Snacks direct image buffer lacks placement restoration")
+end
+local image_module = require("snacks.image.image")
+local terminal_module = require("snacks.image.terminal")
+local original_image_new = image_module.new
+local original_terminal_detect = terminal_module.detect
+local image_new_count = 0
+local terminal_detect_count = 0
+image_module.new = function(...)
+  image_new_count = image_new_count + 1
+  return original_image_new(...)
+end
+terminal_module.detect = function(...)
+  terminal_detect_count = terminal_detect_count + 1
+  return original_terminal_detect(...)
+end
+if image_view.existing_placements(watched_buf) ~= nil
+  or image_view.restore_placement(watched_buf) ~= 0
+  or image_new_count ~= 0
+  or terminal_detect_count ~= 0
+then
+  fail("Initial Snacks image placement restore was not a passive no-op")
+end
+
+local placement_module = require("snacks.image.placement")
+local placement_registry
+for index = 1, 20 do
+  local name, value = debug.getupvalue(placement_module.clean, index)
+  if name == "placements" then
+    placement_registry = value
+    break
+  end
+end
+if type(placement_registry) ~= "table" then
+  fail("Pinned Snacks placement registry is unavailable")
+end
+local show_count = 0
+local fake_placement = {
+  buf = watched_buf,
+  hidden = true,
+  show = function(self)
+    self.hidden = false
+    show_count = show_count + 1
+  end,
+}
+placement_registry[watched_buf] = { fake_placement }
+if image_view.restore_placement(watched_buf) ~= 1 or show_count ~= 1 then
+  fail("Snacks direct image placement was not restored")
+end
+if image_view.restore_placement(watched_buf) ~= 0 or show_count ~= 1 then
+  fail("Visible Snacks image placement was restored more than once")
+end
+fake_placement.hidden = true
+if not image_view.queue_placement_restore(watched_buf)
+  or image_view.queue_placement_restore(watched_buf)
+then
+  fail("Snacks image placement restoration was not deduplicated")
+end
+vim.wait(100, function()
+  return show_count == 2
+end)
+placement_registry[watched_buf] = nil
+image_module.new = original_image_new
+terminal_module.detect = original_terminal_detect
+if show_count ~= 2 then
+  fail("Queued Snacks image placement restoration did not run")
+end
+if image_new_count ~= 0 or terminal_detect_count ~= 0 then
+  fail("Snacks image placement lookup initialized image or terminal state")
+end
+if image_view.active_watchers() ~= 1 then
+  fail("Snacks direct image view did not create one filesystem watcher")
+end
+vim.api.nvim_buf_delete(watched_buf, { force = true })
+vim.wait(100, function()
+  return image_view.active_watchers() == 0
+end)
+if image_view.active_watchers() ~= 0 then
+  fail("Snacks direct image watcher survived buffer cleanup")
+end
+vim.fn.delete(watched_image)
+
+local ordinary_buf = vim.api.nvim_create_buf(true, false)
+if image_view.is_viewer(ordinary_buf)
+  or image_view.normalize_viewer(ordinary_buf)
+  or image_view.handle_external_change(ordinary_buf)
+  or image_view.restore_placement(ordinary_buf) ~= 0
+  or image_view.queue_placement_restore(ordinary_buf)
+then
+  fail("Ordinary buffers were opted into Snacks image viewer semantics")
+end
+local ordinary_change_handlers = vim.api.nvim_get_autocmds({
+  event = "FileChangedShell",
+  buffer = ordinary_buf,
+})
+if #ordinary_change_handlers ~= 0 then
+  fail("Ordinary buffers received the image external-change handler")
+end
+vim.api.nvim_buf_delete(ordinary_buf, { force = true })
 
 local explorer_config = snacks.config.picker.sources.explorer
 

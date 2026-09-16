@@ -858,6 +858,23 @@ Snacks Picker is enabled only as Explorer infrastructure. Explorer-local
 Picker grep and terminal shortcuts are disabled, and the established
 Telescope `<leader>s...` workflow remains the user-facing search system.
 
+Opening a supported image or PDF normally from Explorer displays it in a
+Snacks image buffer inside Neovim. Explorer-local `o` remains the distinct
+system-application action. This direct-file viewer uses Kitty Graphics
+Protocol terminal support and Nix-owned conversion tools; it does not enable
+inline images or math rendering in document source buffers. While a direct
+image view remains open, a parent-directory filesystem watcher refreshes it
+after same-path rewrites or atomic replacements. This supports generated plots
+without closing and reopening the buffer and also applies to regenerated PDFs.
+On first open, source metadata is compared with isolated persistent state so
+changes made between Neovim sessions invalidate only that source's derived
+Snacks artifacts before rendering. Unchanged sources keep their valid cache.
+Direct image/PDF buffers are view-only: external updates refresh silently and
+do not leave a modified buffer, while ordinary text buffers retain Neovim's
+normal external-change and unsaved-edit safeguards. Switching to ordinary
+buffers may hide the terminal placement; returning to the viewer restores its
+existing placement without reopening or reconverting the source.
+
 Neither interface should be so deeply coupled to other configuration that
 replacing it becomes difficult. Basic fallback file navigation should remain
 usable.
@@ -923,6 +940,11 @@ short shell interaction
 
 tmux remains the durable terminal and process environment for long-lived
 shells, agents, REPLs, logs, and other processes.
+
+Snacks image rendering through tmux depends on Kitty Graphics Protocol
+passthrough. Snacks attempts to enable pane-local passthrough, but a future
+tmux integration should verify whether the user's external tmux configuration
+also needs `allow-passthrough` rather than owning that setting here.
 
 ---
 
@@ -1175,6 +1197,13 @@ LSP diagnostics supplement compiler output; they do not replace it.
 
 The editor should support serious multi-file research writing rather than treating LaTeX as plain text with syntax highlighting.
 
+Snacks image support can potentially render referenced images and math inside
+LaTeX source, but both remain intentionally disabled until this workflow is
+designed. Its current direct PDF view is only a quick in-editor preview; the
+later workflow must still evaluate VimTeX, an external research-oriented PDF
+viewer, and SyncTeX forward/inverse search without assuming Snacks replaces
+them.
+
 ---
 
 # 31. Markdown
@@ -1200,6 +1229,11 @@ Source editing should remain recognizable as Markdown source.
 Do not turn the normal editing buffer into a heavily rendered document.
 
 Full rendered preview should generally be external/browser-based.
+
+After the relevant Treesitter and document-language infrastructure exists,
+optional Snacks inline images may be reconsidered for Markdown. HTML and other
+supported document formats may be evaluated when they become relevant, but
+document rendering must remain optional and unnecessary for ordinary editing.
 
 ---
 

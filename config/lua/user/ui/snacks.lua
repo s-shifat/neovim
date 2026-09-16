@@ -18,6 +18,9 @@ function M.setup()
   end
 
   local explorer = require("user.navigation.explorer").snacks_config()
+  local image_view = require("user.ui.image")
+  local image = image_view.snacks_config()
+  image_view.setup()
   local setup_ok, setup_error = pcall(snacks.setup, vim.tbl_deep_extend("force", {
     notifier = {
       enabled = true,
@@ -47,7 +50,7 @@ function M.setup()
     scroll = { enabled = false },
     statuscolumn = { enabled = false },
     words = { enabled = false },
-  }, explorer))
+  }, explorer, image))
 
   if not setup_ok then
     vim.notify = native_notify

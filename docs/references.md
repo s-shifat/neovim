@@ -433,12 +433,14 @@ The daily file explorer uses the already packaged Snacks dependency:
 
 ```text
 https://github.com/folke/snacks.nvim/blob/main/docs/explorer.md
+https://github.com/folke/snacks.nvim/blob/main/docs/image.md
 ```
 
 This is the implementation reference for Explorer options, filesystem actions,
-directory replacement, Git/diagnostic context, and its internal Picker
-dependency. Repository behavior remains authoritative, and enabling Picker for
-Explorer does not make Snacks Picker a general search interface.
+directory replacement, Git/diagnostic context, its internal Picker dependency,
+and direct image/PDF rendering. Repository behavior remains authoritative, and
+enabling Picker for Explorer does not make Snacks Picker a general search
+interface.
 
 ---
 

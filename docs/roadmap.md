@@ -866,6 +866,23 @@ grep, buffer, recent-file, or smart-search mappings were introduced, and the
 Explorer-local Picker grep and terminal bindings are disabled. Stage 8A's
 Telescope configuration and `<leader>s...` namespace are unchanged.
 
+As a refinement to the completed stage, supported image and PDF files opened
+normally from Explorer use Snacks.image for a quick in-Neovim view. PNG is
+displayed directly; Nix-owned ImageMagick and Ghostscript provide conversion,
+including intentional PDF support. The format scope excludes video. Document
+inline images and math rendering remain disabled, and Explorer-local `o`
+continues to open the selected file with its system application. Direct views
+watch their source directory and refresh after same-path rewrites or atomic
+replacement, supporting generated scientific plots and potentially useful PDF
+regeneration without expanding into the later LaTeX workflow. Per-source
+metadata validation also prevents persistent converted artifacts from becoming
+stale when a source changes between Neovim sessions while preserving valid
+cache reuse for unchanged sources. These direct image/PDF buffers are
+explicitly view-only, so their external refreshes are silent and never create
+save/discard prompts; normal text-buffer safeguards remain unchanged. Hidden
+placements are restored from their existing image object when the viewer is
+shown again, so ordinary buffer cycling does not reopen or reconvert sources.
+
 ## Stage 8C — Oil On-Demand
 
 **Status: CURRENT**
@@ -923,6 +940,11 @@ Ctrl-h/j/k/l
 Preserve the existing resize muscle memory where practical. A modern solution
 such as `smart-splits.nvim` is a leading candidate, but the final decision must
 follow inspection of the current tmux configuration.
+
+That inspection should also verify Kitty Graphics Protocol passthrough for
+Snacks image buffers. Snacks attempts pane-local `allow-passthrough`, but any
+required global tmux setting belongs to the user's terminal environment rather
+than this repository.
 
 ## Stage 8F — Quick Terminal
 
@@ -1018,6 +1040,11 @@ language-specific parser availability
 Do not install every available parser by default.
 
 Parsers should be added intentionally for supported languages.
+
+Once relevant document parsers exist, reconsider optional Snacks inline image
+rendering for Markdown and, when useful, HTML or other supported document
+formats. Keep it optional and separate from ordinary source editing; do not
+enable it merely as a side effect of installing Treesitter.
 
 ## Stage 9B — Symbols / Outline
 
@@ -1245,6 +1272,12 @@ style/grammar assistance where mature
 Compiler output remains authoritative.
 
 LSP diagnostics are complementary.
+
+Snacks.image can potentially render referenced images and math expressions in
+LaTeX source, but those capabilities are intentionally deferred to this stage.
+Its existing direct PDF view should be evaluated only as a quick preview that
+may complement—not preemptively replace—the VimTeX, external PDF viewer, and
+SyncTeX forward/inverse-search workflow.
 
 ---
 
