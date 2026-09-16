@@ -885,30 +885,35 @@ shown again, so ordinary buffer cycling does not reopen or reconvert sources.
 
 ## Stage 8C — Oil On-Demand
 
-**Status: CURRENT**
+**Status: COMPLETE**
 
-Oil.nvim is planned as a secondary, on-demand filesystem editing tool. It does
-not replace Snacks Explorer and should not take over normal directory opening
-by default.
+Oil.nvim is implemented as a secondary, on-demand filesystem editing tool. It
+does not replace Snacks Explorer or take over normal directory opening.
 
-Expected usage:
+Implemented usage:
 
 ```text
-dedicated Oil buffer where useful
-floating Oil workflow where useful
-bulk/editable filesystem operations
+<leader>f
+→ toggle a floating editable filesystem at the current file's parent
+→ project root, then cwd, for buffers without a usable file
+→ close when the filesystem task is finished
 ```
 
-This is the planned first deliberate experiment with deferred plugin
+This is the first deliberate experiment with deferred plugin
 initialization:
 
 ```text
 Nix owns Oil availability
 normal startup does not initialize Oil
-explicit Oil action initializes/uses it on demand
+first <leader>f initializes Oil exactly once
+later invocations reuse the initialized module
 ```
 
-This does not imply adoption of a runtime plugin manager.
+Oil uses its supported floating-window API, default buffer-local interaction,
+upstream hidden-file behavior, and normal save/confirmation model. Its
+`default_file_explorer` option is disabled so Snacks continues to own `nvim .`,
+directory edits, and `<leader>e`. This is deferred Lua initialization, not
+runtime plugin-manager lazy loading.
 
 ## Stage 8D — Browser-Like Buffer Bar
 
@@ -1701,9 +1706,9 @@ Stage 8A — Telescope Search Foundation (COMPLETE)
         ↓
 Stage 8B — Daily File Explorer (COMPLETE)
         ↓
-Stage 8C — Oil On-Demand (CURRENT)
+Stage 8C — Oil On-Demand (COMPLETE)
         ↓
-Stage 8D — Browser-Like Buffer Bar
+Stage 8D — Browser-Like Buffer Bar (CURRENT)
         ↓
 Stage 8E — Neovim/tmux Navigation
         ↓
@@ -1759,8 +1764,9 @@ This order may be refined when a dependency relationship provides a concrete rea
 | 8     | Navigation/editor workflow         | **CURRENT** |
 | 8A    | Telescope search foundation        | COMPLETE    |
 | 8B    | Daily file explorer                | COMPLETE    |
-| 8C    | Oil on-demand                      | **CURRENT** |
-| 8D–8G | Remaining navigation workflow      | PLANNED     |
+| 8C    | Oil on-demand                      | COMPLETE    |
+| 8D    | Browser-like buffer bar            | **CURRENT** |
+| 8E–8G | Remaining navigation workflow      | PLANNED     |
 | 9     | Treesitter / structural navigation | PLANNED     |
 | 10    | LSP foundation                     | PLANNED     |
 | 11    | Completion/snippets                | PLANNED     |

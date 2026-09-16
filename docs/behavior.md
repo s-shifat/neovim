@@ -846,6 +846,20 @@ Explorer namespace. The tree stays open after a file is selected, returns focus
 to the editing window, and follows ordinary buffer navigation only while it is
 already open.
 
+Oil is the temporary editable-filesystem interface. `<leader>f` initializes it
+on first use and toggles its supported floating window at the current file's
+parent directory. From a special or unnamed buffer it opens at the Git project
+root, falling back to cwd outside Git. Toggling the float closed returns to the
+prior editing context. Oil retains its default buffer-local interaction and
+confirmation model for creating, renaming, moving, and deleting entries.
+
+Oil is installed on Neovim's runtimepath by Nix, while its Lua module and
+`setup()` call are deliberately deferred until the first `<leader>f`
+invocation. This is deferred Lua initialization, not plugin-manager lazy
+loading. Oil does not intercept directory buffers; Snacks Explorer remains the
+owner of normal directory opening, including `nvim .` and `:edit` of a
+directory.
+
 The Explorer is a complete filesystem view: hidden and Git-ignored entries are
 shown by default. Its upstream toggles may temporarily narrow either category,
 but Telescope's curated ordinary-search exclusions do not apply to the tree.

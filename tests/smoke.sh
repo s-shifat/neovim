@@ -461,6 +461,92 @@ if vim.fn.maparg("<leader>er", "n") ~= "" then
   fail("Snacks Explorer exposes an unexpected <leader>er child mapping")
 end
 
+-- Oil is present on runtimepath, but its Lua module and configuration remain
+-- deferred until the explicit Stage 8C launcher is first used.
+if #vim.api.nvim_get_runtime_file("lua/oil/init.lua", false) == 0 then
+  fail("Oil is unavailable from the Nix plugin inventory")
+end
+
+local oil_navigation = require("user.navigation.oil")
+
+for name in pairs(package.loaded) do
+  if name == "oil" or vim.startswith(name, "oil.") then
+    fail("Oil module loaded during ordinary startup: " .. name)
+  end
+end
+
+if oil_navigation.is_initialized() or oil_navigation.initialization_count() ~= 0 then
+  fail("Oil initialized during ordinary startup")
+end
+
+local oil_mapping = vim.fn.maparg("<leader>f", "n", false, true)
+if type(oil_mapping) ~= "table"
+  or oil_mapping.desc ~= "Toggle Oil filesystem editor"
+  or type(oil_mapping.callback) ~= "function"
+then
+  fail("Oil launcher is unavailable: <leader>f")
+end
+
+for _, mapping in ipairs({ "<leader>sp", "<leader>sf" }) do
+  if vim.fn.maparg(mapping, "n") == "" then
+    fail("Telescope mapping is unavailable: " .. mapping)
+  end
+end
+
+local original_cwd = vim.fn.getcwd()
+local oil_test_root = vim.fn.tempname()
+local oil_test_nested = oil_test_root .. "/nested"
+vim.fn.mkdir(oil_test_nested, "p")
+vim.fn.system({ "git", "-C", oil_test_root, "init", "--quiet" })
+vim.cmd.lcd(vim.fn.fnameescape(oil_test_nested))
+
+local special_buf = vim.api.nvim_create_buf(false, true)
+vim.bo[special_buf].buftype = "nofile"
+if oil_navigation.starting_directory(special_buf) ~= oil_test_root then
+  fail("Oil special-buffer fallback did not resolve the project root")
+end
+vim.api.nvim_buf_delete(special_buf, { force = true })
+
+local non_project = vim.fn.tempname()
+vim.fn.mkdir(non_project, "p")
+vim.cmd.lcd(vim.fn.fnameescape(non_project))
+special_buf = vim.api.nvim_create_buf(false, true)
+vim.bo[special_buf].buftype = "nofile"
+if oil_navigation.starting_directory(special_buf) ~= non_project then
+  fail("Oil special-buffer fallback did not resolve cwd outside a project")
+end
+vim.api.nvim_buf_delete(special_buf, { force = true })
+
+local file_dir = oil_test_root .. "/files"
+local file_path = file_dir .. "/example.lua"
+vim.fn.mkdir(file_dir, "p")
+vim.fn.writefile({ "return true" }, file_path)
+local file_buf = vim.fn.bufadd(file_path)
+vim.fn.bufload(file_buf)
+if oil_navigation.starting_directory(file_buf) ~= file_dir then
+  fail("Oil did not resolve a normal file buffer to its parent directory")
+end
+vim.api.nvim_buf_delete(file_buf, { force = true })
+vim.cmd.lcd(vim.fn.fnameescape(original_cwd))
+vim.fn.delete(oil_test_root, "rf")
+vim.fn.delete(non_project, "rf")
+
+local oil = oil_navigation.ensure_oil()
+if not oil or not oil_navigation.is_initialized() then
+  fail("Oil did not initialize on first use")
+end
+local oil_config = require("oil.config")
+if oil_config.default_file_explorer ~= false then
+  fail("Oil unexpectedly owns directory opening")
+end
+if oil_config.float.max_width ~= 0.80 or oil_config.float.max_height ~= 0.75 then
+  fail("Oil floating window does not use the intended proportional size")
+end
+oil_navigation.ensure_oil()
+if oil_navigation.initialization_count() ~= 1 then
+  fail("Oil setup is not idempotent")
+end
+
 vim.notify("notification smoke test", vim.log.levels.INFO)
 
 if vim.notify ~= snacks.notifier.notify then

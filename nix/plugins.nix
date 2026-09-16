@@ -44,6 +44,12 @@
     telescope-live-grep-args-nvim # Interactive ripgrep arguments for advanced search.
 
     # ------------------------------------------------------------------------
+    # NAVIGATION — FILESYSTEM EDITING
+    # ------------------------------------------------------------------------
+
+    oil-nvim # On-demand floating editable filesystem interface.
+
+    # ------------------------------------------------------------------------
     # UI — NOTIFICATIONS
     # ------------------------------------------------------------------------
 
