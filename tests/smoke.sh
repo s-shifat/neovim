@@ -689,6 +689,61 @@ if expected_runtime and expected_runtime ~= "" then
   end
 end
 
+-- Eager initialization and graceful fallback are navigation integration invariants.
+local function check_navigation()
+  assert(package.loaded["smart-splits"], "smart-splits was not eagerly loaded")
+  local module = require("user.navigation.smart-splits")
+  local plugin = require("smart-splits")
+  local function keys(key)
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, false, true), "xt", false)
+  end
+  vim.cmd("only")
+  local left = vim.api.nvim_get_current_win()
+  vim.cmd("vsplit")
+  local right = vim.api.nvim_get_current_win()
+  keys("<C-h>")
+  assert(vim.api.nvim_get_current_win() == left, "split navigation failed")
+  keys("<C-h>")
+  assert(vim.api.nvim_get_current_win() == left and #vim.api.nvim_list_wins() == 2, "edge wrapped or split")
+  keys("<C-l>")
+  assert(vim.api.nvim_get_current_win() == right, "reverse navigation failed")
+  vim.cmd("only")
+
+  -- Simulate both dependency and setup failures, then exercise the core mapping.
+  local real_setup, real_preload = plugin.setup, package.preload["smart-splits"]
+  local notify = vim.notify
+  vim.notify = function() end
+  for _, failure in ipairs({ "missing", "setup" }) do
+    package.loaded["user.core.keymaps"] = nil
+    require("user.core.keymaps")
+    local terminal_fallback = vim.fn.maparg("<C-h>", "t")
+    local resize_fallback = vim.fn.maparg("<C-Left>", "n")
+    if failure == "missing" then
+      package.loaded["smart-splits"] = nil
+      package.preload["smart-splits"] = function() error("simulated missing plugin") end
+    else
+      package.loaded["smart-splits"] = plugin
+      plugin.setup = function() error("simulated setup failure") end
+    end
+    module.setup()
+    local before = vim.api.nvim_get_current_win()
+    vim.cmd("vsplit")
+    keys("<C-h>")
+    assert(vim.api.nvim_get_current_win() == before, failure .. " broke native navigation")
+    assert(vim.fn.maparg("<C-h>", "t") == terminal_fallback, "terminal fallback was replaced")
+    assert(vim.fn.maparg("<C-Left>", "n") == resize_fallback, "resize fallback was replaced")
+    vim.cmd("only")
+  end
+  package.loaded["smart-splits"], package.preload["smart-splits"] = plugin, real_preload
+  plugin.setup, vim.notify = real_setup, notify
+  module.setup()
+  assert(vim.fn.maparg("<C-h>", "i") == "", "Insert Ctrl-h was stolen")
+end
+local navigation_ok, navigation_error = pcall(check_navigation)
+if not navigation_ok then
+  fail("smart-splits navigation: " .. tostring(navigation_error))
+end
+
 local sentinel_path = vim.env.NVIM_SMOKE_SENTINEL
 
 if not sentinel_path or sentinel_path == "" then

@@ -436,6 +436,30 @@ Tests should preserve that distinction.
 
 ---
 
+## Stage 8E navigation integration
+
+The packaged smoke probe checks eager smart-splits availability, actual split
+navigation and non-wrapping edges, and native fallback navigation after simulated
+missing-plugin and setup failures. It also verifies that Terminal/resize fallback
+mappings survive failure and Insert Ctrl-h remains unmapped.
+
+For multiplexer changes, use an isolated tmux socket/server with the candidate
+external tmux.conf and an attached test client. Exercise all four directions
+through Neovim splits, Neovim↔tmux boundaries, shell panes, terminal buffers,
+floats, outer edges, and explicit zoom/unzoom; check Ctrl-Arrow resize deltas of
+3 on both sides. Check eager pane marking and marker clearing on exit. Compare
+copy-mode tables against an unconfigured server. Always stop test servers, and
+never source the candidate into the user's existing server automatically.
+
+Stage 8E was exercised with `nvim-next` (Neovim 0.12.5), smart-splits 2.1.0
+(snapshot 2026-08-22), and tmux 3.7c. Automated PTY input verified standard
+Ctrl-Arrow escape sequences through tmux; physical Kitty keyboard delivery and
+visual image/PDF rendering still require user review. Headless Explorer resize
+probes kept its width stable; existing smoke coverage checks image/PDF lifecycle,
+Bufferline, and safe closing. These are not claims of visual validation.
+
+---
+
 # 14. State-Isolation Regression
 
 Stable and experimental editor state must remain separated.

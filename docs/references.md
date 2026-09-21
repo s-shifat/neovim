@@ -457,6 +457,21 @@ plugin-free core owns safe closing; Telescope remains fuzzy buffer discovery.
 
 ---
 
+## Stage 8E smart-splits
+
+Adopted implementation reference for directional navigation and resizing:
+
+```text
+https://github.com/smart-splits-nvim/smart-splits.nvim
+```
+
+Use the pinned nixpkgs plugin source to verify edge handling, floating-window
+behavior, multiplexer lifecycle, and the official `@pane-is-vim` tmux bindings.
+The tmux bindings belong to dotfiles; this repository owns plugin availability
+and Neovim behavior. No tmux plugin manager is involved.
+
+---
+
 # 11. Behavioral Reference Policy
 
 Behavioral reference precedence and the detailed behavioral research sequence are defined in:

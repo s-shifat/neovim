@@ -1,7 +1,9 @@
 local explorer = require("user.navigation.explorer")
 local oil = require("user.navigation.oil")
 local telescope = require("user.navigation.telescope")
+local smart_splits = require("user.navigation.smart-splits")
 
+smart_splits.setup()
 explorer.setup()
 oil.setup()
 telescope.setup()

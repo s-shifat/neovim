@@ -477,10 +477,10 @@ Space
 → clear search highlight
 
 Ctrl-h/j/k/l
-→ split navigation
+→ seamless Neovim split / tmux pane navigation (non-wrapping)
 
 Ctrl-arrow keys
-→ resize splits
+→ directional split / tmux pane resize by 3 (Normal mode)
 
 Shift-h/l
 → previous / next buffer
@@ -501,7 +501,7 @@ p in Visual mode
 → paste without replacing the yank register
 
 Ctrl-h/j/k/l in terminal mode
-→ leave terminal input and navigate windows
+→ leave terminal input and navigate Neovim windows / tmux panes
 ```
 
 Future plugin-backed mappings should extend this vocabulary rather than arbitrarily replacing it.
@@ -939,23 +939,31 @@ Neovim owns editor splits.
 
 tmux owns long-running terminal workloads.
 
-Desired directional behavior is:
+`smart-splits.nvim` initializes eagerly in the navigation layer. Normal-mode
+`Ctrl-h/j/k/l` moves left/down/up/right through Neovim splits, then into an
+adjacent tmux pane at the editor boundary. At the outer boundary it stops:
+no wrapping, new splits, or movement between tmux windows.
 
-```text
-Ctrl-h/j/k/l
-```
+Normal-mode `Ctrl-Left/Down/Up/Right` resizes directionally by 3. Terminal-mode
+`Ctrl-h/j/k/l` first leaves terminal input, then performs the same navigation.
+Terminal Ctrl-Arrow resizing is not mapped; Insert-mode editing is unchanged.
 
-for movement across:
+Floating windows use `float_win_behavior = "previous"`: return through the
+previous ordinary Neovim window, then navigate. Zoomed tmux panes disable
+multiplexer navigation until explicitly unzoomed; navigation never unzooms them.
+The pinned plugin supports `at_edge = "stop"` while retaining tmux handoff.
 
-```text
-Neovim split boundaries
-and
-tmux pane boundaries
-```
+Core native navigation and resize mappings load first and are replaced only
+after successful plugin setup. Missing or failed smart-splits setup leaves
+those native fallbacks usable (including their existing resize increments).
 
-without requiring different muscle memory.
-
-The intended experience is seamless directional navigation.
+This repository owns the Nix plugin dependency and Lua behavior. Dotfiles/Home
+Manager owns tmux and its prefixless keybindings in
+`system/modules/home/tmux/config/tmux.conf`, using pane-local `@pane-is-vim`.
+The plugin marks the pane eagerly and clears the marker to `0` on exit/suspend
+in the pinned version. Only tmux integration is selected; outside tmux,
+multiplexer integration is disabled, including Kitty's multiplexer backend.
+Alt-m remains the tmux prefix; copy-mode tables remain unchanged.
 
 The quick Neovim terminal should be a toggleable bottom horizontal panel,
 opened in the current project or working directory, for:
@@ -970,9 +978,9 @@ tmux remains the durable terminal and process environment for long-lived
 shells, agents, REPLs, logs, and other processes.
 
 Snacks image rendering through tmux depends on Kitty Graphics Protocol
-passthrough. Snacks attempts to enable pane-local passthrough, but a future
-tmux integration should verify whether the user's external tmux configuration
-also needs `allow-passthrough` rather than owning that setting here.
+passthrough. Snacks attempts to enable pane-local passthrough. Graphics
+passthrough remains a separate terminal-environment concern; Stage 8E does not
+change Kitty or tmux graphics configuration.
 
 ---
 
@@ -1676,7 +1684,7 @@ The following should remain true unless deliberately revised.
 
 21. File exploration should remain replaceable and non-essential to basic editing.
 
-22. Neovim splits and tmux panes should eventually share directional navigation muscle memory.
+22. Neovim splits and tmux panes share non-wrapping directional navigation muscle memory.
 
 23. Python is first-class without Neovim becoming a Python package manager.
 

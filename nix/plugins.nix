@@ -51,6 +51,12 @@
     oil-nvim # On-demand floating editable filesystem interface.
 
     # ------------------------------------------------------------------------
+    # NAVIGATION — SPLITS / TMUX
+    # ------------------------------------------------------------------------
+
+    smart-splits-nvim # Eager seamless Neovim/tmux navigation and resizing.
+
+    # ------------------------------------------------------------------------
     # UI — NOTIFICATIONS
     # ------------------------------------------------------------------------
 

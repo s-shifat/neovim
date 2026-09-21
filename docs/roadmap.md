@@ -935,27 +935,31 @@ new dependency, navigation, safe closing, and existing integrations.
 
 ## Stage 8E — Neovim / tmux Navigation
 
-**Status: CURRENT**
+**Status: COMPLETE**
 
-Target behavior:
+Implemented with Nix-owned `smart-splits.nvim`, eagerly initialized in the
+navigation layer. Normal `Ctrl-h/j/k/l` moves through Neovim splits and tmux
+panes without wrapping or creating splits. Normal Ctrl-Arrow resizes by 3;
+Terminal Ctrl-h/j/k/l leaves input before navigating; Insert mode is unchanged.
+Core native mappings remain available if plugin loading/setup fails.
 
-```text
-Ctrl-h/j/k/l
-→ seamless directional movement across Neovim splits and tmux panes
-```
+`at_edge = "stop"` preserves handoff in the pinned plugin. Floats return through
+the previous Neovim window; zoomed panes block multiplexer navigation. Only tmux
+is integrated. The external dotfiles tmux.conf adds prefixless navigation and
+resize bindings using `@pane-is-vim`, preserving Alt-m, indexing, and copy mode.
 
-Preserve the existing resize muscle memory where practical. A modern solution
-such as `smart-splits.nvim` is a leading candidate, but the final decision must
-follow inspection of the current tmux configuration.
-
-That inspection should also verify Kitty Graphics Protocol passthrough for
-Snacks image buffers. Snacks attempts pane-local `allow-passthrough`, but any
-required global tmux setting belongs to the user's terminal environment rather
-than this repository.
+Validation: flake checks and packaged smoke passed; `nvim-next` probes outside
+tmux and an isolated attached tmux client exercised all four directions, split
+and pane transitions, terminal navigation, resize by 3, no-wrap edges, floats,
+zoom/unzoom, and pane marker lifecycle. Explorer width stayed stable during an
+editor resize probe. Physical Kitty keyboard delivery and visual image/PDF
+rendering remain user review items; graphics configuration was not changed.
+See `docs/testing.md` for the validation boundary. Completion does not imply
+experiment acceptance, promotion, deployment, or reloading the user's tmux server.
 
 ## Stage 8F — Quick Terminal
 
-**Status: PLANNED**
+**Status: CURRENT**
 
 The selected direction is Snacks Terminal.
 
@@ -1712,9 +1716,9 @@ Stage 8C — Oil On-Demand (COMPLETE)
         ↓
 Stage 8D — Browser-Like Buffer Bar (COMPLETE)
         ↓
-Stage 8E — Neovim/tmux Navigation (CURRENT)
+Stage 8E — Neovim/tmux Navigation (COMPLETE)
         ↓
-Stage 8F — Quick Terminal
+Stage 8F — Quick Terminal (CURRENT)
         ↓
 Stage 8G — Sessions / Project Context
         ↓
@@ -1768,8 +1772,9 @@ This order may be refined when a dependency relationship provides a concrete rea
 | 8B    | Daily file explorer                | COMPLETE    |
 | 8C    | Oil on-demand                      | COMPLETE    |
 | 8D    | Browser-like buffer bar            | COMPLETE    |
-| 8E    | Neovim/tmux navigation             | **CURRENT** |
-| 8F–8G | Remaining navigation workflow      | PLANNED     |
+| 8E    | Neovim/tmux navigation             | COMPLETE    |
+| 8F    | Quick terminal                    | **CURRENT** |
+| 8G    | Sessions / project context        | PLANNED     |
 | 9     | Treesitter / structural navigation | PLANNED     |
 | 10    | LSP foundation                     | PLANNED     |
 | 11    | Completion/snippets                | PLANNED     |
