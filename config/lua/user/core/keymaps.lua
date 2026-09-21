@@ -1,5 +1,5 @@
 local map = vim.keymap.set
-local api = vim.api
+local buffers = require("user.core.buffers")
 
 -- ============================================================================
 -- LEADER KEYS
@@ -12,89 +12,6 @@ map({ "n", "x" }, "<Space>", "<Nop>", {
   silent = true,
   desc = "Reserve Space as leader prefix",
 }) -- Prevent bare Space from performing an unrelated action while it acts as leader.
-
-
--- ============================================================================
--- SAFE BUFFER CLOSING
--- ============================================================================
-
-local function find_replacement_buffer(current_buf)
-  local alternate = vim.fn.bufnr("#") -- Prefer the alternate buffer because it usually matches recent workflow.
-
-  if
-    alternate > 0
-    and alternate ~= current_buf
-    and api.nvim_buf_is_valid(alternate)
-    and vim.bo[alternate].buflisted
-  then
-    return alternate
-  end
-
-  for _, buf in ipairs(api.nvim_list_bufs()) do
-    if
-      buf ~= current_buf
-      and api.nvim_buf_is_valid(buf)
-      and vim.bo[buf].buflisted
-    then
-      return buf -- Fall back to another listed buffer if no useful alternate buffer exists.
-    end
-  end
-
-  return nil -- No existing listed buffer is available as a replacement.
-end
-
-local function close_current_buffer()
-  local current_buf = api.nvim_get_current_buf()
-  local force_delete = false
-
-  if vim.bo[current_buf].modified then
-    local choice = vim.fn.confirm(
-      "Save changes before closing this buffer?",
-      "&Save\n&Discard\n&Cancel",
-      3
-    ) -- Protect unsaved work instead of silently discarding it.
-
-    if choice == 1 then
-      local ok, err = pcall(vim.cmd, "write") -- Save the current buffer before closing it.
-
-      if not ok then
-        vim.notify(
-          "Could not save buffer: " .. tostring(err),
-          vim.log.levels.ERROR
-        ) -- Leave the buffer open when writing fails.
-        return
-      end
-    elseif choice == 2 then
-      force_delete = true -- Explicit Discard permits deleting an unsaved buffer.
-    else
-      return -- Cancel/Escape leaves the current buffer and window untouched.
-    end
-  end
-
-  local replacement = find_replacement_buffer(current_buf)
-
-  if replacement then
-    api.nvim_set_current_buf(replacement) -- Reuse the current window instead of closing the split.
-  else
-    local new_buf = api.nvim_create_buf(true, false)
-    api.nvim_set_current_buf(new_buf) -- Keep the window alive with a fresh empty buffer when necessary.
-  end
-
-  local ok, err = pcall(api.nvim_buf_delete, current_buf, {
-    force = force_delete,
-  }) -- Delete only the old buffer after the current window has a replacement.
-
-  if not ok then
-    if api.nvim_buf_is_valid(current_buf) then
-      api.nvim_set_current_buf(current_buf)
-    end
-
-    vim.notify(
-      "Could not close buffer: " .. tostring(err),
-      vim.log.levels.ERROR
-    ) -- Restore the original buffer when deletion unexpectedly fails.
-  end
-end
 
 
 -- ============================================================================
@@ -111,7 +28,9 @@ map("n", "<leader>q", "<cmd>quit<cr>", {
   desc = "Quit window",
 }) -- Quit the current window; 'confirm' protects unsaved changes.
 
-map("n", "<leader>c", close_current_buffer, {
+map("n", "<leader>c", function()
+  buffers.close()
+end, {
   silent = true,
   desc = "Close buffer safely",
 }) -- Close the current buffer while preserving the window/layout where practical.

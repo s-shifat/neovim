@@ -917,23 +917,25 @@ runtime plugin-manager lazy loading.
 
 ## Stage 8D — Browser-Like Buffer Bar
 
-**Status: PLANNED**
+**Status: COMPLETE**
 
-Target behavior:
+Bufferline is eagerly initialized after theme/icons and stays visible over
+ordinary Neovim buffers. Catppuccin integration, file icons, duplicate-path
+prefixes, a native-state `●` modified marker, thin separators, variable widths,
+and buffer-ID ordering provide the strip. Shift-h/l follow its visible order
+with native navigation retained when setup fails.
 
-```text
-visible browser-like buffer bar
-all buffers remain discoverable through Telescope
-safe buffer closing remains authoritative
-normal Neovim buffers remain the underlying model
-```
-
-Bufferline is the leading historical/modern candidate, but plugin selection
-remains part of the Stage 8D design step.
+The plugin-free core safe-close helper is shared by `<leader>c`, close icons,
+and middle-click, protecting current and background targets with Save / Discard /
+Cancel and preserving splits. Telescope remains fuzzy buffer discovery; the
+bar spans the full width above Explorer, and Oil remains on-demand. Diagnostics,
+tabpage indicators, and additional Bufferline workflows remain disabled or
+deferred. Packaged checks and terminal-driven nvim-next validation cover the
+new dependency, navigation, safe closing, and existing integrations.
 
 ## Stage 8E — Neovim / tmux Navigation
 
-**Status: PLANNED**
+**Status: CURRENT**
 
 Target behavior:
 
@@ -1708,9 +1710,9 @@ Stage 8B — Daily File Explorer (COMPLETE)
         ↓
 Stage 8C — Oil On-Demand (COMPLETE)
         ↓
-Stage 8D — Browser-Like Buffer Bar (CURRENT)
+Stage 8D — Browser-Like Buffer Bar (COMPLETE)
         ↓
-Stage 8E — Neovim/tmux Navigation
+Stage 8E — Neovim/tmux Navigation (CURRENT)
         ↓
 Stage 8F — Quick Terminal
         ↓
@@ -1765,8 +1767,9 @@ This order may be refined when a dependency relationship provides a concrete rea
 | 8A    | Telescope search foundation        | COMPLETE    |
 | 8B    | Daily file explorer                | COMPLETE    |
 | 8C    | Oil on-demand                      | COMPLETE    |
-| 8D    | Browser-like buffer bar            | **CURRENT** |
-| 8E–8G | Remaining navigation workflow      | PLANNED     |
+| 8D    | Browser-like buffer bar            | COMPLETE    |
+| 8E    | Neovim/tmux navigation             | **CURRENT** |
+| 8F–8G | Remaining navigation workflow      | PLANNED     |
 | 9     | Treesitter / structural navigation | PLANNED     |
 | 10    | LSP foundation                     | PLANNED     |
 | 11    | Completion/snippets                | PLANNED     |

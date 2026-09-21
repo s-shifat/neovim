@@ -1,5 +1,6 @@
 local theme = require("user.ui.theme")
 local catppuccin = require("user.ui.themes.catppuccin")
+local bufferline = require("user.ui.bufferline")
 local icons = require("user.ui.icons")
 local snacks = require("user.ui.snacks")
 local gitsigns = require("user.ui.gitsigns")
@@ -25,6 +26,7 @@ theme.setup({
 -- ============================================================================
 
 icons.setup() -- Initialize the shared icon provider against the active theme.
+bufferline.setup() -- Build the persistent buffer strip after theme and icons.
 
 
 -- ============================================================================

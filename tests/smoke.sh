@@ -547,6 +547,83 @@ if oil_navigation.initialization_count() ~= 1 then
   fail("Oil setup is not idempotent")
 end
 
+local buffer_close_ok, buffer_close_err = pcall(function()
+  -- Protect target-aware saving and split preservation across every close entry point.
+  local api = vim.api
+  local options = require("bufferline.config").options
+  assert(package.loaded.bufferline and vim.o.showtabline == 2, "Bufferline did not initialize")
+  assert(vim.fn.maparg("H", "n"):find("BufferLineCyclePrev", 1, true))
+  local original_confirm, original_notify = vim.fn.confirm, vim.notify
+  local root = vim.fn.tempname()
+  vim.fn.mkdir(root, "p")
+  local focus = api.nvim_create_buf(true, false)
+  api.nvim_set_current_buf(focus)
+  api.nvim_buf_set_name(focus, root .. "/focus.txt")
+  api.nvim_buf_set_lines(focus, 0, -1, false, { "focus must not be saved" })
+  local close_key = vim.fn.maparg("<leader>c", "n", false, true).callback
+  local close_actions = {
+    key = close_key,
+    icon = options.close_command,
+    middle = options.middle_mouse_command,
+  }
+  for label, close in pairs(close_actions) do
+    for _, background in ipairs({ false, true }) do
+      if label ~= "key" or not background then
+        for _, choice in ipairs({ 0, 3, 1, 2 }) do
+          local path = root .. "/" .. label .. tostring(background) .. choice
+          vim.fn.writefile({ "original" }, path)
+          local target = vim.fn.bufadd(path)
+          vim.fn.bufload(target)
+          vim.bo[target].buflisted = true
+          api.nvim_buf_set_lines(target, 0, -1, false, { "target changes" })
+          if choice == 0 then vim.bo[target].modified = false end
+          api.nvim_set_current_buf(background and focus or target)
+          local current_win = api.nvim_get_current_win()
+          vim.cmd("vsplit")
+          api.nvim_win_set_buf(0, target)
+          api.nvim_set_current_win(current_win)
+          local layout = vim.fn.winlayout()
+          vim.fn.confirm = function(_, choices, default)
+            assert(choices == "&Save\n&Discard\n&Cancel" and default == 3)
+            return choice
+          end
+          close(target)
+          assert(vim.deep_equal(layout, vim.fn.winlayout()), "split layout changed")
+          assert(api.nvim_get_current_win() == current_win, "focus changed")
+          if choice == 3 then
+            assert(vim.bo[target].buflisted and vim.bo[target].modified, "Cancel lost target")
+          else
+            assert(not api.nvim_buf_is_valid(target) or not vim.bo[target].buflisted, "target was not closed")
+          end
+          assert(vim.fn.readfile(path)[1] == (choice == 1 and "target changes" or "original"))
+          assert(vim.fn.filereadable(root .. "/focus.txt") == 0, "saved focused buffer instead of target")
+          vim.cmd("only!")
+          api.nvim_set_current_buf(focus)
+          if api.nvim_buf_is_valid(target) then api.nvim_buf_delete(target, { force = true }) end
+        end
+      end
+    end
+  end
+  -- A failed background write must leave both target and focused buffer intact.
+  local target = api.nvim_create_buf(true, false)
+  api.nvim_buf_set_name(target, root .. "/missing/target")
+  api.nvim_buf_set_lines(target, 0, -1, false, { "unsaved" })
+  vim.fn.confirm = function() return 1 end
+  local notified = false
+  vim.notify = function() notified = true end
+  options.close_command(target)
+  assert(notified and vim.bo[target].buflisted and vim.bo[target].modified)
+  assert(api.nvim_get_current_buf() == focus)
+  api.nvim_buf_delete(target, { force = true })
+  vim.fn.confirm, vim.notify = original_confirm, original_notify
+  vim.bo[focus].modified = false
+  api.nvim_buf_delete(focus, { force = false })
+  vim.fn.delete(root, "rf")
+end)
+if not buffer_close_ok then
+  fail("Safe buffer close regression: " .. tostring(buffer_close_err))
+end
+
 vim.notify("notification smoke test", vim.log.levels.INFO)
 
 if vim.notify ~= snacks.notifier.notify then

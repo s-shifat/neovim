@@ -444,6 +444,19 @@ interface.
 
 ---
 
+## Stage 8D Bufferline
+
+Adopted implementation reference for the persistent buffer strip:
+
+```text
+https://github.com/akinsho/bufferline.nvim
+```
+
+Bufferline provides buffer presentation and direct navigation. The repository's
+plugin-free core owns safe closing; Telescope remains fuzzy buffer discovery.
+
+---
+
 # 11. Behavioral Reference Policy
 
 Behavioral reference precedence and the detailed behavioral research sequence are defined in:

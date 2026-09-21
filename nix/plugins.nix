@@ -22,9 +22,10 @@
     nvim-web-devicons # Shared icon provider for plugin-backed UI consumers.
 
     # ------------------------------------------------------------------------
-    # UI — STATUSLINE
+    # UI — BUFFER BAR / STATUSLINE
     # ------------------------------------------------------------------------
 
+    bufferline-nvim # Persistent strip over ordinary buffers.
     lualine-nvim # Restrained global editor statusline.
 
     # ------------------------------------------------------------------------

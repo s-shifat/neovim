@@ -385,7 +385,7 @@ merely for historical compatibility when modern Neovim already provides the inte
 
 Do not treat native Neovim tabpages as the normal browser-style buffer interface.
 
-A dedicated buffer UI is the target.
+Bufferline provides the persistent browser-like buffer UI.
 
 ---
 
@@ -538,7 +538,11 @@ delete the old buffer
 
 Closing a buffer should not unnecessarily destroy a split.
 
-This behavior should remain compatible with the eventual browser-like buffer interface.
+The plugin-free `user.core.buffers.close(bufnr)` helper owns this behavior.
+`<leader>c`, Bufferline close icons, and middle-click all use it. Background
+targets receive the same Save / Discard / Cancel protection; Save writes the
+target buffer, and a failed write leaves it open. Windows displaying the target
+receive a replacement buffer without unnecessarily changing the split layout.
 
 ---
 
@@ -904,23 +908,28 @@ usable.
 
 The project does not treat Neovim tabpages as ordinary browser-style editor buffers.
 
-The target model is:
+Bufferline is always visible, including with one normal buffer. It displays
+file icons and filenames in buffer-ID order, with path prefixes distinguishing
+duplicate names, thin separators, and variable-width entries. Catppuccin's
+supported Bufferline theme emphasizes the selected buffer and subdues inactive
+entries. A solid `●` reflects Neovim's modified state and disappears on save;
+upstream displays this marker in place of the entry's close icon while modified.
 
-```text
-visible browser-like buffer bar
-+
-fuzzy picker containing all buffers
-+
-safe handling of modified buffers
-+
-natural buffer selection after close
-```
+Left-click selects a buffer. Per-buffer close icons and middle-click use the
+same safe-close helper as `<leader>c`, including for background targets.
+Right-click on buffer entries does nothing; there is no global close icon.
+`Shift-h` / `Shift-l` follow Bufferline's visible order after successful setup,
+with native previous/next-buffer mappings retained if setup fails.
 
-The visible buffer bar may show the most relevant/recent buffers as space allows.
+Telescope (`<leader>sb`) remains the fuzzy discovery interface for all buffers,
+including those outside the visible strip. Bufferline spans the full editor
+width above Snacks Explorer, without offsets or Explorer width tracking. Oil
+retains its on-demand initialization and existing floating interface.
 
-All buffers should remain discoverable through the buffer picker.
-
-Closing a buffer should produce sensible adjacent/MRU behavior and preserve window structure where practical.
+The bar represents ordinary buffers, not tabpages. Numbers, diagnostics and
+tabpage indicators are disabled. Pinning, grouping, manual reordering, picking,
+and bulk-close workflows are deferred. Closing prefers an alternate/listed
+replacement and preserves the window structure where practical.
 
 ---
 
