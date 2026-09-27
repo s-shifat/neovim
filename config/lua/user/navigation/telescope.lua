@@ -1,6 +1,6 @@
 local M = {}
 
-local function make_config(actions, action_layout, themes)
+local function make_config(actions, action_layout, themes, lga_actions)
   return {
     defaults = {
       initial_mode = "insert",
@@ -53,8 +53,18 @@ local function make_config(actions, action_layout, themes)
         case_mode = "smart_case",
       },
       live_grep_args = {
-        -- Parse the prompt as ripgrep arguments; quote multi-word search text.
-        auto_quoting = false,
+        -- Treat ordinary multi-word prompts as one grep pattern.
+        -- Explicit ripgrep argument syntax still works when the prompt begins with
+        -- a quote or an option such as "-".
+        auto_quoting = true,
+
+        mappings = {
+          i = {
+            -- Quote the current prompt so ripgrep arguments can be appended.
+            -- Example: 40 kip -> "40 kip"
+            ["<C-q>"] = lga_actions.quote_prompt(),
+          },
+        },
       },
       ["ui-select"] = themes.get_dropdown({ previewer = false }),
     },
@@ -93,8 +103,9 @@ function M.setup()
   local actions = require("telescope.actions")
   local action_layout = require("telescope.actions.layout")
   local themes = require("telescope.themes")
+  local lga_actions = require("telescope-live-grep-args.actions")
 
-  local config = make_config(actions, action_layout, themes)
+  local config = make_config(actions, action_layout, themes, lga_actions)
   local setup_ok, setup_error = pcall(telescope.setup, config)
 
   if not setup_ok then

@@ -783,7 +783,8 @@ The initial search namespace is:
 ```text
 <leader>sp  project files at the Git root, or cwd outside Git
 <leader>sf  files from cwd
-<leader>st  live grep with interactive ripgrep arguments
+<leader>st  live grep with interactive ripgrep arguments; ordinary multi-word
+            queries work directly, with regex and smart-case behavior preserved
 <leader>sw  current-word or visual-selection grep
 <leader>s/  grep open files
 <leader>sb  buffers
@@ -800,6 +801,11 @@ The initial search namespace is:
 restores the preview only from Telescope Normal mode, leaving Space available
 for query input in Insert mode. `<leader>sua` finds all files and `<leader>sug`
 greps all content with ignored and hidden paths included deliberately.
+
+In `<leader>st`, Insert-mode `<C-q>` quotes the current prompt so ripgrep
+arguments can be appended. The mapping is local to this picker and mode;
+Telescope's existing quickfix mapping remains available in other pickers and
+in Normal mode.
 
 Ordinary file and text searches include useful hidden project files, respect
 project ignore rules, and exclude common environment/cache trees and lock
