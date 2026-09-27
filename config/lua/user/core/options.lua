@@ -17,7 +17,7 @@ opt.conceallevel = 0                 -- Keep source markup such as Markdown back
 
 opt.guicursor = {
   "n-v-c:block",                     -- Normal/Visual/Command modes use a block cursor.
-  "i-ci-ve:ver25",                   -- Insert-like modes use a thin vertical cursor.
+  "i-ci-ve-t:ver25",                 -- Insert and terminal-input modes use a thin vertical cursor.
   "r-cr:hor20",                      -- Replace modes use a short horizontal cursor.
   "o:hor50",                         -- Operator-pending mode uses a half-height horizontal cursor.
 }

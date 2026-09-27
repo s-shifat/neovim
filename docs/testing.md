@@ -458,6 +458,22 @@ visual image/PDF rendering still require user review. Headless Explorer resize
 probes kept its width stable; existing smoke coverage checks image/PDF lifecycle,
 Bufferline, and safe closing. These are not claims of visual validation.
 
+## Stage 8F quick terminal
+
+The packaged smoke probe checks the Snacks 2.31.0 terminal API, centralized
+30% bottom-split configuration, Normal and Terminal `Ctrl-\` mappings, absence
+of an Insert-mode mapping, terminal-local `jj` normal-mode entry through the
+synchronous terminal escape sequence, fixed unnumbered count, cwd-sensitive
+identity, and non-fatal toggle failure handling. Terminal-driven `nvim-next`
+probes should separately exercise shell reuse across hide/show, successful-exit
+renewal, Git-root and non-Git cwd selection, distinct project identities,
+actual split dimensions, and coexistence with Explorer and smart-splits
+navigation/resize.
+
+Prompt appearance, terminal colors, and exact visual proportions are manual or
+PTY/integration concerns rather than stable smoke assertions. Stage 8F uses the
+existing Snacks dependency and therefore adds no Nix package.
+
 ---
 
 # 14. State-Isolation Regression
@@ -1119,4 +1135,3 @@ KEEP TESTS SMALL.
 DO NOT TEST COSMETICS.
 VALIDATE WHAT AUTOMATION CANNOT.
 ```
-

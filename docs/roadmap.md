@@ -81,14 +81,14 @@ A stage may also contain smaller completed and remaining sub-stages.
 The latest completed editor milestone is:
 
 ```text
-Stage 8A — Telescope Search Foundation
+Stage 8F — Quick Terminal
 ```
 
 The current editor-development target is:
 
 ```text
 Stage 8 — Navigation and Editor Workflow
-Stage 8B — Daily File Explorer
+Stage 8G — Sessions / Project Context
 ```
 
 Exact source and deployed revisions should be determined from the current repositories rather than recorded here.
@@ -959,9 +959,18 @@ experiment acceptance, promotion, deployment, or reloading the user's tmux serve
 
 ## Stage 8F — Quick Terminal
 
-**Status: CURRENT**
+**Status: COMPLETE**
 
-The selected direction is Snacks Terminal.
+Implemented with the existing Nix-owned Snacks Terminal; no plugin dependency
+was added. `Ctrl-\` is the single toggle in Normal and Terminal modes. It opens
+an interactive shell in a 30% bottom split at the Git project root, falling
+back to Neovim's cwd, while preserving Snacks' shell selection and split
+winbar.
+
+One fixed, cwd-sensitive identity provides one quick terminal per project.
+Hide/show preserves the live shell; a successful shell exit closes and removes
+the instance so the next toggle starts fresh. The existing smart-splits
+terminal navigation and Normal Ctrl-Arrow resizing coexist with the panel.
 
 Target behavior:
 
@@ -991,7 +1000,7 @@ The Neovim terminal is not the durable shell/session layer.
 
 ## Stage 8G — Sessions / Project Context
 
-**Status: PLANNED**
+**Status: CURRENT**
 
 Sessions have a dedicated design substage because they overlap with:
 
@@ -1718,9 +1727,9 @@ Stage 8D — Browser-Like Buffer Bar (COMPLETE)
         ↓
 Stage 8E — Neovim/tmux Navigation (COMPLETE)
         ↓
-Stage 8F — Quick Terminal (CURRENT)
+Stage 8F — Quick Terminal (COMPLETE)
         ↓
-Stage 8G — Sessions / Project Context
+Stage 8G — Sessions / Project Context (CURRENT)
         ↓
 Stage 9A — Treesitter Foundation
         ↓
@@ -1773,8 +1782,8 @@ This order may be refined when a dependency relationship provides a concrete rea
 | 8C    | Oil on-demand                      | COMPLETE    |
 | 8D    | Browser-like buffer bar            | COMPLETE    |
 | 8E    | Neovim/tmux navigation             | COMPLETE    |
-| 8F    | Quick terminal                    | **CURRENT** |
-| 8G    | Sessions / project context        | PLANNED     |
+| 8F    | Quick terminal                    | COMPLETE    |
+| 8G    | Sessions / project context        | **CURRENT** |
 | 9     | Treesitter / structural navigation | PLANNED     |
 | 10    | LSP foundation                     | PLANNED     |
 | 11    | Completion/snippets                | PLANNED     |

@@ -965,8 +965,12 @@ in the pinned version. Only tmux integration is selected; outside tmux,
 multiplexer integration is disabled, including Kitty's multiplexer backend.
 Alt-m remains the tmux prefix; copy-mode tables remain unchanged.
 
-The quick Neovim terminal should be a toggleable bottom horizontal panel,
-opened in the current project or working directory, for:
+The quick Neovim terminal is a toggleable bottom horizontal panel occupying
+30% of the editor height. `Ctrl-\` toggles it from Normal mode and from active
+terminal input; opening or refocusing it enters terminal input without an
+extra command. In terminal input, `jj` enters terminal-normal mode, replacing
+Snacks' default double-Escape sequence. It opens at the Git project root,
+falling back to Neovim's cwd, for:
 
 ```text
 quick command
@@ -976,6 +980,20 @@ short shell interaction
 
 tmux remains the durable terminal and process environment for long-lived
 shells, agents, REPLs, logs, and other processes.
+
+Snacks keys terminal identity by cwd, with one unnumbered quick terminal per
+project. Hiding the panel preserves its shell; a successful shell exit closes
+and removes it so the next toggle creates a fresh shell. Snacks' configured
+shell resolution and split winbar remain unchanged. Terminal input uses the
+same thin vertical cursor as editor Insert mode; terminal-normal mode uses the
+editor's Normal-mode block cursor. `Ctrl-h/j/k/l` continues to navigate between
+the terminal, editor splits, and tmux panes, while the existing normal-mode
+Ctrl-Arrow mappings continue to resize splits.
+
+Snacks Terminal is already supplied by the existing Snacks dependency; this
+behavior adds no terminal plugin or Nix dependency. Multiple terminals,
+command/REPL terminals, process persistence, and session management remain
+outside the quick-terminal responsibility.
 
 Snacks image rendering through tmux depends on Kitty Graphics Protocol
 passthrough. Snacks attempts to enable pane-local passthrough. Graphics

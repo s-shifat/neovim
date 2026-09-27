@@ -17,9 +17,9 @@ local base_config = {
     },
   },
 
-  -- Unused modules with automatic setup lifecycles remain off. Other
-  -- Snacks utilities (terminal, lazygit, gitbrowse, scratch, and zen) are
-  -- on-demand only and receive no mappings or configuration.
+  -- Unused modules with automatic setup lifecycles remain off. Other Snacks
+  -- utilities (lazygit, gitbrowse, scratch, and zen) remain on-demand only and
+  -- receive no mappings or configuration.
   bigfile = { enabled = false },
   dashboard = { enabled = false },
   indent = { enabled = false },
@@ -31,12 +31,13 @@ local base_config = {
   words = { enabled = false },
 }
 
-local function make_config(explorer, image)
+local function make_config(explorer, image, terminal)
   return vim.tbl_deep_extend(
     "force",
     base_config,
     explorer,
-    image
+    image,
+    terminal
   )
 end
 
@@ -60,8 +61,9 @@ function M.setup()
   local explorer = require("user.navigation.explorer").snacks_config()
   local image_view = require("user.ui.image")
   local image = image_view.snacks_config()
+  local terminal = require("user.navigation.terminal").snacks_config()
   image_view.setup()
-  local config = make_config(explorer, image)
+  local config = make_config(explorer, image, terminal)
   local setup_ok, setup_error = pcall(snacks.setup, config)
 
   if not setup_ok then

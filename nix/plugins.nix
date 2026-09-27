@@ -60,7 +60,7 @@
     # UI — NOTIFICATIONS
     # ------------------------------------------------------------------------
 
-    snacks-nvim # Framework present for its notifier only in Stage 7E.
+    snacks-nvim # Notifications, Explorer, image/PDF viewing, and quick terminal.
 
     # ------------------------------------------------------------------------
     # UI — GIT SIGNS

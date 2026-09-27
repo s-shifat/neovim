@@ -129,6 +129,10 @@ if vim.o.laststatus ~= 3 then
   fail("Lualine did not configure one global statusline")
 end
 
+if not vim.o.guicursor:find("i%-ci%-ve%-t:ver25") then
+  fail("terminal input does not use the editor's Insert-mode cursor")
+end
+
 -- Verify that the packaged Git-sign layer is available and initialized.
 local gitsigns_ok, gitsigns_err = pcall(require, "gitsigns")
 
@@ -205,6 +209,76 @@ end
 
 if snacks.config.image.enabled ~= true then
   fail("Snacks image viewing is not enabled")
+end
+
+-- Verify the Stage 8F quick terminal configuration and mappings without
+-- relying on prompt rendering or shell timing in the packaged smoke test.
+local quick_terminal = require("user.navigation.terminal")
+
+if snacks.version ~= "2.31.0" then
+  fail("Snacks version differs from the terminal API verified for Stage 8F")
+end
+
+if type(snacks.terminal.toggle) ~= "function" then
+  fail("Snacks terminal toggle API is unavailable")
+end
+
+if snacks.config.terminal.win.position ~= "bottom"
+  or snacks.config.terminal.win.height ~= 0.30
+then
+  fail("quick terminal is not configured as a 30% bottom split")
+end
+
+local terminal_normal = snacks.config.terminal.win.keys.term_normal
+if terminal_normal[1] ~= "jj"
+    or terminal_normal.mode ~= "t"
+    or terminal_normal.expr ~= true
+    or type(terminal_normal[2]) ~= "function" then
+  fail("quick terminal does not use jj for terminal-normal mode")
+end
+
+if terminal_normal[2]() ~= "<C-\\><C-n>" then
+  fail("quick terminal jj mapping does not leave input synchronously")
+end
+
+for _, mode in ipairs({ "n", "t" }) do
+  local mapping = vim.fn.maparg("<C-\\>", mode, false, true)
+  if type(mapping) ~= "table"
+      or mapping.desc ~= "Toggle quick terminal"
+      or type(mapping.callback) ~= "function" then
+    fail("quick terminal mapping is unavailable in mode " .. mode)
+  end
+end
+
+if vim.fn.maparg("<C-\\>", "i") ~= "" then
+  fail("quick terminal mapping leaked into Insert mode")
+end
+
+local terminal_options = quick_terminal.options()
+if terminal_options.count ~= 1
+    or terminal_options.cwd ~= require("user.navigation.search").project_root() then
+  fail("quick terminal does not use one cwd-sensitive project identity")
+end
+
+local terminal_id = snacks.terminal.tid(nil, terminal_options)
+local other_terminal_id = snacks.terminal.tid(nil, {
+  count = 1,
+  cwd = terminal_options.cwd .. "/other-project",
+})
+if terminal_id ~= snacks.terminal.tid(nil, terminal_options)
+    or terminal_id == other_terminal_id then
+  fail("quick terminal identity is not stable and cwd-sensitive")
+end
+
+local real_terminal_toggle = snacks.terminal.toggle
+local real_notify = vim.notify
+snacks.terminal.toggle = function() error("simulated terminal failure") end
+vim.notify = function() end
+local failure_ok, failure_error = pcall(quick_terminal.toggle)
+snacks.terminal.toggle = real_terminal_toggle
+vim.notify = real_notify
+if not failure_ok then
+  fail("quick terminal failure was fatal: " .. tostring(failure_error))
 end
 
 local image_formats = {
