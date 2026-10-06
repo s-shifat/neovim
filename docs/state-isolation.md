@@ -193,6 +193,11 @@ vim.fn.stdpath("state") .. "/undo"
 
 This preserves stable/experimental isolation automatically.
 
+Stage 8G project sessions use exactly `stdpath("state") .. "/sessions/"` at
+runtime. Production `nvim` and experimental `nvim-next` therefore have separate
+session directories through their different application identities. No session
+files belong in the configuration tree or the project repository.
+
 ---
 
 # 7. Cache Directory

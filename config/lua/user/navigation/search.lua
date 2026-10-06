@@ -55,8 +55,9 @@ local function git_root(cwd)
   end
 end
 
-local function project_root()
-  return git_root(vim.fn.getcwd()) or vim.fn.getcwd()
+local function project_root(directory)
+  directory = directory or vim.fn.getcwd()
+  return git_root(directory) or directory
 end
 
 local function find_files(opts)

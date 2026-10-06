@@ -63,6 +63,12 @@
     snacks-nvim # Notifications, Explorer, image/PDF viewing, and quick terminal.
 
     # ------------------------------------------------------------------------
+    # PROJECT — SESSIONS
+    # ------------------------------------------------------------------------
+
+    persistence-nvim # Native project sessions with isolated state storage.
+
+    # ------------------------------------------------------------------------
     # UI — GIT SIGNS
     # ------------------------------------------------------------------------
 

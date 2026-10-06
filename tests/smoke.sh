@@ -818,6 +818,25 @@ if not navigation_ok then
   fail("smart-splits navigation: " .. tostring(navigation_error))
 end
 
+-- Project sessions must use the packaged plugin and isolated state directory.
+local session_ok, persistence = pcall(require, "persistence")
+if not session_ok or package.loaded["user.project.session"] == nil then
+  fail("project session module or packaged Persistence plugin is unavailable")
+end
+local session_config = require("persistence.config").options
+if session_config.branch ~= false or session_config.need ~= 1
+    or session_config.dir ~= vim.fn.stdpath("state") .. "/sessions/" then
+  fail("project session identity or storage policy changed")
+end
+if vim.o.sessionoptions ~= "buffers,curdir,folds,tabpages,winsize" then
+  fail("project sessionoptions changed")
+end
+for _, suffix in ipairs({ "f", "r", "s", "d" }) do
+  if vim.fn.maparg("<leader>p" .. suffix, "n") == "" then
+    fail("project session mapping <leader>p" .. suffix .. " is missing")
+  end
+end
+
 local sentinel_path = vim.env.NVIM_SMOKE_SENTINEL
 
 if not sentinel_path or sentinel_path == "" then
@@ -847,5 +866,76 @@ fi
 
 [[ -f "$sentinel" ]] ||
   fail "Neovim exited without completing the smoke probe"
+
+project="$tmp_dir/session-project"
+mkdir -p "$project"
+printf 'first\nsecond\n' > "$project/first.txt"
+printf 'another\n' > "$project/second.txt"
+git -C "$project" init -q
+
+cat > "$tmp_dir/session-probe.lua" <<'LUA'
+local mode = vim.env.NVIM_SMOKE_SESSION_MODE
+local result = vim.env.NVIM_SMOKE_SESSION_RESULT
+local persistence = require("persistence")
+
+if mode == "seed" then
+  vim.cmd.edit("first.txt")
+  vim.cmd.vsplit("second.txt")
+  vim.fn.writefile({ persistence.current() }, result)
+elseif mode == "restore" then
+  vim.fn.writefile({
+    tostring(vim.v.this_session ~= ""),
+    tostring(vim.fn.winnr("$") == 2),
+    vim.fn.expand("%:t"),
+  }, result)
+elseif mode == "file" then
+  vim.fn.writefile({
+    tostring(persistence.active()),
+    tostring(vim.fn.winnr("$")),
+    vim.fn.expand("%:t"),
+  }, result)
+end
+
+vim.cmd("qall")
+LUA
+
+export NVIM_SMOKE_SESSION_PROBE="$tmp_dir/session-probe.lua"
+export NVIM_SMOKE_SESSION_RESULT="$tmp_dir/session-result"
+
+run_session_probe() {
+  (
+    cd "$project"
+    "$nvim_bin" --headless "$@" \
+      '+lua vim.schedule(function() dofile(vim.env.NVIM_SMOKE_SESSION_PROBE) end)'
+  ) >"$tmp_dir/session-output" 2>&1 || {
+    cat "$tmp_dir/session-output" >&2
+    fail "project session probe failed"
+  }
+}
+
+export NVIM_SMOKE_SESSION_MODE=seed
+run_session_probe
+session_file="$(head -n 1 "$NVIM_SMOKE_SESSION_RESULT")"
+[[ -f "$session_file" ]] || fail "workspace exit did not save a project session"
+export NVIM_SMOKE_SESSION_MODE=restore
+run_session_probe .
+[[ "$(sed -n '1p' "$NVIM_SMOKE_SESSION_RESULT")" == true ]] ||
+  fail "directory launch did not restore the project session"
+[[ "$(sed -n '2p' "$NVIM_SMOKE_SESSION_RESULT")" == true ]] ||
+  fail "directory launch did not restore the split layout"
+[[ "$(sed -n '3p' "$NVIM_SMOKE_SESSION_RESULT")" == second.txt ]] ||
+  fail "directory launch did not restore the active file"
+session_hash="$(sha256sum "$session_file" | cut -d ' ' -f 1)"
+
+export NVIM_SMOKE_SESSION_MODE=file
+run_session_probe first.txt
+[[ "$(sed -n '1p' "$NVIM_SMOKE_SESSION_RESULT")" == false ]] ||
+  fail "explicit file launch enabled automatic session saving"
+[[ "$(sed -n '2p' "$NVIM_SMOKE_SESSION_RESULT")" == 1 ]] ||
+  fail "explicit file launch restored the previous split layout"
+[[ "$(sed -n '3p' "$NVIM_SMOKE_SESSION_RESULT")" == first.txt ]] ||
+  fail "explicit file launch did not open the requested file"
+[[ "$(sha256sum "$session_file" | cut -d ' ' -f 1)" == "$session_hash" ]] ||
+  fail "explicit file launch overwrote the canonical project session"
 
 echo "neovim-smoke: PASS"

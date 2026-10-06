@@ -472,6 +472,19 @@ and Neovim behavior. No tmux plugin manager is involved.
 
 ---
 
+## Stage 8G Persistence
+
+Adopted implementation reference for project sessions over native `:mksession`:
+
+```text
+https://github.com/folke/persistence.nvim
+```
+
+The pinned nixpkgs plugin source defines `current`, `save`, `load`, `select`,
+`start`, `stop`, and the exit-save lifecycle used by the project layer.
+
+---
+
 # 11. Behavioral Reference Policy
 
 Behavioral reference precedence and the detailed behavioral research sequence are defined in:

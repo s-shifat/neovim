@@ -1008,13 +1008,39 @@ change Kitty or tmux graphics configuration.
 
 ---
 
-# 23. Session Behavior
+# 23. Project Sessions
 
-Neovim sessions are part of the intended editor experience. Their design must
-consider project identity and project-root behavior before selecting an
-implementation.
+Stage 8G uses Nix-packaged `persistence.nvim` as a thin manager around native
+`:mksession`. A project is the current Git working-tree root, falling back to
+Neovim's cwd outside Git. Managed sessions change the global cwd to that root;
+Persistence uses the same cwd as its identity. Each project has one canonical
+session across branches.
 
-They should restore useful editor state without pretending to preserve operating-system processes.
+`nvim`, `nvim .`, and a directory-path launch restore that project's saved
+workspace automatically when one exists. A workspace with no session starts
+normally and saves on ordinary exit after a real file is open. Explicit file
+arguments open those files without restoring or automatically saving a project
+session. This protects a richer workspace from a quick single-file edit.
+
+The Project mappings are:
+
+```text
+<leader>pf  find saved project sessions through vim.ui.select / Telescope
+<leader>pr  restore the current project's session
+<leader>ps  save the current project and enable exit saving
+<leader>pd  confirm and delete the current session; stop exit saving
+```
+
+Finding a session saves the current managed project first. Cancelling the
+picker leaves a transient invocation transient. Modified real file buffers
+block both finding and restoring until the changes are resolved. Deletion
+affects only the current project; `<leader>ps` creates a fresh session afterward.
+
+Sessions retain real file buffers, splits, tabs, sizes, folds, and cwd through
+`sessionoptions=buffers,curdir,folds,tabpages,winsize`. They do not deliberately
+restore terminal processes, help, quickfix, Explorer, Oil, Telescope, or other
+transient UI. A restored project can open a fresh Stage 8F quick terminal with
+`Ctrl-\`.
 
 A later project-aware tmux workflow should reconstruct an environment such as:
 

@@ -320,6 +320,12 @@ Lua may:
 
 Lua should not silently download or install them.
 
+Project sessions follow this boundary: Nix packages `persistence.nvim`; the
+`user.project` Lua layer configures native session behavior. Managed sessions
+use the Git working-tree root (cwd fallback) as both global cwd and Persistence
+identity, with one session per project and no branch variants. Session files are
+mutable state under `stdpath("state") .. "/sessions/"`.
+
 The ownership boundary is therefore:
 
 ```text

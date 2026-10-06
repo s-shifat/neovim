@@ -81,14 +81,13 @@ A stage may also contain smaller completed and remaining sub-stages.
 The latest completed editor milestone is:
 
 ```text
-Stage 8F — Quick Terminal
+Stage 8G — Project Sessions and Context
 ```
 
 The current editor-development target is:
 
 ```text
-Stage 8 — Navigation and Editor Workflow
-Stage 8G — Sessions / Project Context
+Stage 9A — Treesitter Foundation
 ```
 
 Exact source and deployed revisions should be determined from the current repositories rather than recorded here.
@@ -691,7 +690,7 @@ highlights and Which-Key identifies the notification mapping namespace.
 
 # 8. Stage 8 — Navigation and Editor Workflow
 
-**Status: CURRENT**
+**Status: COMPLETE**
 
 This stage builds the main navigation and editor-workflow experience through
 explicit, independently reviewable substages.
@@ -1000,44 +999,25 @@ The Neovim terminal is not the durable shell/session layer.
 
 ## Stage 8G — Sessions / Project Context
 
-**Status: CURRENT**
+**Status: COMPLETE**
 
-Sessions have a dedicated design substage because they overlap with:
-
-```text
-project identity
-project root
-working directory
-session ownership
-project-local configuration
-project environment
-future tmux/project reconstruction
-```
-
-The intended behavioral direction remains approximately:
-
-```text
-save conveniently
-restore deliberately
-stable and experimental session state remain isolated
-```
-
-Implementation should be decided only after the project/session model is
-discussed. Neither `persistence.nvim` nor native `:mksession` is selected yet.
-
-Major behavioral goals are defined in `docs/behavior.md`. Each substage should
-remain modular so that selecting one interface does not make later replacement
-prohibitively difficult.
+Nix-packaged `persistence.nvim` manages one native session per Git working-tree
+root, with cwd fallback outside Git and branch variants disabled. Workspace
+launches restore automatically; explicit file launches remain transient until
+manual save or restore. Exit saving, Project mappings, modified-buffer safety,
+and isolated `stdpath("state")/sessions` storage are implemented in
+`user.project`. Details belong in `docs/behavior.md` and
+`docs/state-isolation.md`.
 
 ---
 
 # 9. Stage 9 — Treesitter and Structural Navigation
 
-**Status: PLANNED**
+**Status: CURRENT**
 
 ## Stage 9A — Treesitter Foundation
 
-**Status: PLANNED**
+**Status: CURRENT**
 
 Goal:
 
@@ -1729,7 +1709,7 @@ Stage 8E — Neovim/tmux Navigation (COMPLETE)
         ↓
 Stage 8F — Quick Terminal (COMPLETE)
         ↓
-Stage 8G — Sessions / Project Context (CURRENT)
+Stage 8G — Sessions / Project Context (COMPLETE)
         ↓
 Stage 9A — Treesitter Foundation
         ↓
@@ -1776,15 +1756,16 @@ This order may be refined when a dependency relationship provides a concrete rea
 | 7C    | Statusline                         | COMPLETE    |
 | 7D    | Git signs                          | COMPLETE    |
 | 7E    | Notifications                      | COMPLETE    |
-| 8     | Navigation/editor workflow         | **CURRENT** |
+| 8     | Navigation/editor workflow         | COMPLETE    |
 | 8A    | Telescope search foundation        | COMPLETE    |
 | 8B    | Daily file explorer                | COMPLETE    |
 | 8C    | Oil on-demand                      | COMPLETE    |
 | 8D    | Browser-like buffer bar            | COMPLETE    |
 | 8E    | Neovim/tmux navigation             | COMPLETE    |
 | 8F    | Quick terminal                    | COMPLETE    |
-| 8G    | Sessions / project context        | **CURRENT** |
-| 9     | Treesitter / structural navigation | PLANNED     |
+| 8G    | Sessions / project context         | COMPLETE    |
+| 9     | Treesitter / structural navigation | **CURRENT** |
+| 9A    | Treesitter foundation              | **CURRENT** |
 | 10    | LSP foundation                     | PLANNED     |
 | 11    | Completion/snippets                | PLANNED     |
 | 12    | Formatting/linting                 | PLANNED     |

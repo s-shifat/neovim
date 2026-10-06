@@ -11,6 +11,7 @@
       nativeBuildInputs = [
         pkgs.bash
         pkgs.coreutils
+        pkgs.git
         nvim
       ];
     }
