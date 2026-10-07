@@ -1,5 +1,24 @@
 { pkgs }:
 
+let
+  treesitterParsers = with pkgs.vimPlugins.nvim-treesitter-parsers; [
+    bash
+    lua
+    nix
+    python
+    latex
+    markdown
+    markdown_inline
+    json
+    yaml
+    toml
+    # nixpkgs propagates the TSV parser with CSV, although only CSV's query
+    # inherits TSV's query. Keep the query dependency, but not the extra parser.
+    (csv.overrideAttrs (old: {
+      passthru = (old.passthru or { }) // { dependencies = [ ]; };
+    }))
+  ];
+in
 {
   # ==========================================================================
   # START PLUGINS
@@ -8,7 +27,7 @@
   # These plugins are available immediately when Neovim starts.
   # Nix owns installation/versioning; Lua only configures their behavior.
 
-  start = with pkgs.vimPlugins; [
+  start = (with pkgs.vimPlugins; [
     # ------------------------------------------------------------------------
     # UI — THEMES
     # ------------------------------------------------------------------------
@@ -74,7 +93,7 @@
 
     gitsigns-nvim # Git gutter signs and buffer-local hunk actions.
 
-  ];
+  ]) ++ treesitterParsers ++ map (parser: parser.associatedQuery) treesitterParsers;
 
   # ==========================================================================
   # OPTIONAL PLUGINS

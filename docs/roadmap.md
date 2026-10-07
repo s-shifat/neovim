@@ -81,13 +81,13 @@ A stage may also contain smaller completed and remaining sub-stages.
 The latest completed editor milestone is:
 
 ```text
-Stage 8G — Project Sessions and Context
+Stage 9A — Treesitter Foundation
 ```
 
 The current editor-development target is:
 
 ```text
-Stage 9A — Treesitter Foundation
+Stage 9B — Symbols / Outline
 ```
 
 Exact source and deployed revisions should be determined from the current repositories rather than recorded here.
@@ -1017,7 +1017,7 @@ and isolated `stdpath("state")/sessions` storage are implemented in
 
 ## Stage 9A — Treesitter Foundation
 
-**Status: CURRENT**
+**Status: COMPLETE**
 
 Goal:
 
@@ -1048,7 +1048,7 @@ enable it merely as a side effect of installing Treesitter.
 
 ## Stage 9B — Symbols / Outline
 
-**Status: PLANNED**
+**Status: CURRENT**
 
 Goal:
 
@@ -1765,7 +1765,8 @@ This order may be refined when a dependency relationship provides a concrete rea
 | 8F    | Quick terminal                    | COMPLETE    |
 | 8G    | Sessions / project context         | COMPLETE    |
 | 9     | Treesitter / structural navigation | **CURRENT** |
-| 9A    | Treesitter foundation              | **CURRENT** |
+| 9A    | Treesitter foundation              | COMPLETE    |
+| 9B    | Symbols / Outline                  | **CURRENT** |
 | 10    | LSP foundation                     | PLANNED     |
 | 11    | Completion/snippets                | PLANNED     |
 | 12    | Formatting/linting                 | PLANNED     |

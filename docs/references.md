@@ -373,6 +373,16 @@ When determining whether a dependency already exists in Nix, inspect nixpkgs bef
 
 ---
 
+## Treesitter upstream documentation
+
+- [Neovim Treesitter API and query documentation](https://neovim.io/doc/user/treesitter.html)
+- [nixpkgs Neovim packaging](https://github.com/NixOS/nixpkgs/tree/master/pkgs/applications/editors/vim)
+
+The pinned nixpkgs supplies standalone parser derivations through
+`vimPlugins.nvim-treesitter-parsers`; each selected parser contributes its
+`associatedQuery` package. Verify the pinned package set when attributes or
+APIs change.
+
 # 10. Catppuccin for Neovim
 
 ## Repository

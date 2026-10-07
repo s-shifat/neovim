@@ -1321,6 +1321,20 @@ optional Snacks inline images may be reconsidered for Markdown. HTML and other
 supported document formats may be evaluated when they become relevant, but
 document rendering must remain optional and unnecessary for ordinary editing.
 
+## Stage 9A syntax highlighting
+
+Native Treesitter highlighting starts automatically for shell, Lua, Nix,
+Python, LaTeX, Markdown, JSON, YAML, TOML, and CSV files. Standard Markdown
+inline and fenced-code language injections are available through the packaged
+queries. Indentation and folding retain their existing behavior. If a parser
+fails, the buffer remains editable and the editor gives at most one warning
+for that language per session. Other filetypes retain their existing syntax
+behavior.
+
+Historical LunarVim behavior to revisit after this foundation: a Treesitter
+textobject selected the contents of fenced Markdown code blocks. This is
+intentionally deferred beyond Stage 9A.
+
 ---
 
 # 32. Deferred Notes Workflow

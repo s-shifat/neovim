@@ -53,6 +53,7 @@ Nix
 ├── Neovim
 ├── plugins
 ├── Treesitter parsers
+├── Treesitter queries
 ├── language servers
 ├── formatters
 ├── linters
@@ -61,6 +62,10 @@ Nix
 Lua
 └── configures Neovim and the software supplied by Nix
 ```
+
+Selected standalone Treesitter parsers and each parser's `associatedQuery`
+come from the pinned nixpkgs. Native Lua calls `vim.treesitter.start()` for
+supported filetypes. There is no runtime parser manager or parser download.
 
 Neovim consumes dependencies supplied by Nix.
 

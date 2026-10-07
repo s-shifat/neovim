@@ -57,6 +57,81 @@ if vim.g.neovim_config_loaded ~= true then
   fail("packaged Neovim configuration did not finish loading")
 end
 
+-- The packaged parser/query inventory must work through native Neovim APIs.
+if type(vim.treesitter.start) ~= "function"
+  or type(vim.treesitter.language.add) ~= "function"
+then
+  fail("native Treesitter APIs are unavailable")
+end
+
+local syntax_samples = {
+  { "sh", "bash", "#!/usr/bin/env bash\necho hello" },
+  { "lua", "lua", "local answer = 42" },
+  { "nix", "nix", "{ pkgs }: { package = pkgs.fd; }" },
+  { "python", "python", "def answer():\n    return 42" },
+  { "tex", "latex", "\\documentclass{article}" },
+  { "markdown", "markdown", "# Heading\n\n```python\nprint('hello')\n```" },
+  { "json", "json", '{"items": [1, 2]}' },
+  { "yaml", "yaml", "items:\n  - one" },
+  { "toml", "toml", "[items]\nvalues = [1, 2]" },
+  { "csv", "csv", "name,value\none,1" },
+}
+
+local function has_packaged_query(language)
+  for _, path in ipairs(vim.api.nvim_get_runtime_file(
+    "queries/" .. language .. "/highlights.scm", true
+  )) do
+    if path:find("nvim%-treesitter%-grammars/queries/") then
+      return true
+    end
+  end
+  return false
+end
+
+for _, sample in ipairs(syntax_samples) do
+  local filetype, language, source = unpack(sample)
+  if not vim.treesitter.language.add(language) then
+    fail("packaged Treesitter parser cannot load: " .. language)
+  end
+  if not has_packaged_query(language)
+    or vim.treesitter.query.get(language, "highlights") == nil
+  then
+    fail("packaged Treesitter highlight query is unavailable: " .. language)
+  end
+
+  local buf = vim.api.nvim_create_buf(true, false)
+  vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.split(source, "\n"))
+  vim.bo[buf].filetype = filetype
+  local parser_ok, parser = pcall(vim.treesitter.get_parser, buf, language)
+  if not parser_ok or parser == nil
+    or vim.treesitter.highlighter.active[buf] == nil
+  then
+    fail("FileType did not start native highlighting: " .. filetype)
+  end
+
+  if filetype == "markdown" then
+    parser:parse(true)
+    local injections = {}
+    parser:for_each_tree(function(_, tree)
+      injections[tree:lang()] = true
+    end)
+    if not injections.markdown_inline or not injections.python then
+      fail("Markdown inline or fenced Python injection is unavailable")
+    end
+  end
+  vim.api.nvim_buf_delete(buf, { force = true })
+end
+
+if not vim.treesitter.language.add("markdown_inline")
+  or not has_packaged_query("markdown_inline")
+  or vim.treesitter.query.get("markdown_inline", "highlights") == nil
+then
+  fail("packaged Markdown inline parser/query is unavailable")
+end
+if #vim.api.nvim_get_runtime_file("parser/tsv.so", true) ~= 0 then
+  fail("unselected TSV parser entered the runtime inventory")
+end
+
 -- Verify that the Nix-packaged theme plugin and declared default colorscheme loaded.
 local catppuccin_ok, catppuccin_err = pcall(require, "catppuccin")
 
@@ -870,7 +945,7 @@ fi
 project="$tmp_dir/session-project"
 mkdir -p "$project"
 printf 'first\nsecond\n' > "$project/first.txt"
-printf 'another\n' > "$project/second.txt"
+printf 'local restored = true\n' > "$project/second.lua"
 git -C "$project" init -q
 
 cat > "$tmp_dir/session-probe.lua" <<'LUA'
@@ -880,13 +955,15 @@ local persistence = require("persistence")
 
 if mode == "seed" then
   vim.cmd.edit("first.txt")
-  vim.cmd.vsplit("second.txt")
+  vim.cmd.vsplit("second.lua")
   vim.fn.writefile({ persistence.current() }, result)
 elseif mode == "restore" then
   vim.fn.writefile({
     tostring(vim.v.this_session ~= ""),
     tostring(vim.fn.winnr("$") == 2),
     vim.fn.expand("%:t"),
+    tostring(vim.treesitter.highlighter.active[vim.api.nvim_get_current_buf()] ~= nil),
+    vim.bo.filetype,
   }, result)
 elseif mode == "file" then
   vim.fn.writefile({
@@ -923,8 +1000,10 @@ run_session_probe .
   fail "directory launch did not restore the project session"
 [[ "$(sed -n '2p' "$NVIM_SMOKE_SESSION_RESULT")" == true ]] ||
   fail "directory launch did not restore the split layout"
-[[ "$(sed -n '3p' "$NVIM_SMOKE_SESSION_RESULT")" == second.txt ]] ||
+[[ "$(sed -n '3p' "$NVIM_SMOKE_SESSION_RESULT")" == second.lua ]] ||
   fail "directory launch did not restore the active file"
+[[ "$(sed -n '4p' "$NVIM_SMOKE_SESSION_RESULT")" == true ]] ||
+  fail "session restore did not reactivate Treesitter for the source buffer (filetype $(sed -n '5p' "$NVIM_SMOKE_SESSION_RESULT"))"
 session_hash="$(sha256sum "$session_file" | cut -d ' ' -f 1)"
 
 export NVIM_SMOKE_SESSION_MODE=file

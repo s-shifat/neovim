@@ -476,6 +476,21 @@ existing Snacks dependency and therefore adds no Nix package.
 
 ---
 
+## Stage 9A native Treesitter
+
+The packaged smoke probe loads all 11 selected parsers and their highlight
+queries, triggers the supported `FileType` events, checks native highlighters,
+and confirms Markdown inline and fenced Python injection trees. It also
+protects the exact parser inventory from nixpkgs' transitive TSV parser.
+Use `:checkhealth vim.treesitter` for runtime health inspection;
+`:checkhealth nvim-treesitter` does not apply because that plugin is absent.
+
+Manual validation with `nvim-next` should confirm filetype detection and
+editable buffers for supported and unsupported files. Query contents and
+highlight colors are upstream/theme behavior, not fixed test snapshots.
+
+---
+
 # 14. State-Isolation Regression
 
 Stable and experimental editor state must remain separated.
