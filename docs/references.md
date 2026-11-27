@@ -495,6 +495,20 @@ The pinned nixpkgs plugin source defines `current`, `save`, `load`, `select`,
 
 ---
 
+## Stage 9B Aerial
+
+Adopted implementation reference for Treesitter outlines and document symbols:
+
+```text
+https://github.com/stevearc/aerial.nvim
+```
+
+Consult the pinned nixpkgs source for configuration, upstream symbol queries,
+and the Telescope extension. Aerial consumes native parsers directly; its
+optional `nvim-treesitter` integration is not required by this project.
+
+---
+
 # 11. Behavioral Reference Policy
 
 Behavioral reference precedence and the detailed behavioral research sequence are defined in:

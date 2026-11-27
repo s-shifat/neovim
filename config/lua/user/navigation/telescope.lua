@@ -116,6 +116,7 @@ function M.setup()
   load_extension(telescope, "fzf")
   load_extension(telescope, "ui-select")
   load_extension(telescope, "live_grep_args")
+  load_extension(telescope, "aerial")
 
   require("user.navigation.search").setup()
   vim.g.neovim_telescope_loaded = true

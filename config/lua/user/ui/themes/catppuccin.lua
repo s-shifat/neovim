@@ -44,6 +44,7 @@ local config = {
   auto_integrations = false, -- Never silently enable integrations based on detected plugins.
 
   integrations = {
+    aerial = true, -- Theme the structural outline and current-symbol highlight.
     gitsigns = true, -- Use Catppuccin highlights for Git gutter signs.
     snacks = {
       enabled = true, -- Apply Catppuccin highlights to Snacks notifications.

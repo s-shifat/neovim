@@ -62,6 +62,7 @@ in
     telescope-fzf-native-nvim # Native fuzzy sorter for responsive large pickers.
     telescope-ui-select-nvim # Route vim.ui.select through Telescope.
     telescope-live-grep-args-nvim # Interactive ripgrep arguments for advanced search.
+    aerial-nvim # Treesitter-backed outline and Telescope document symbols.
 
     # ------------------------------------------------------------------------
     # NAVIGATION — FILESYSTEM EDITING

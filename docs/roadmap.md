@@ -81,14 +81,17 @@ A stage may also contain smaller completed and remaining sub-stages.
 The latest completed editor milestone is:
 
 ```text
-Stage 9A — Treesitter Foundation
+Stage 9B — Symbols / Outline
 ```
 
 The current editor-development target is:
 
 ```text
-Stage 9B — Symbols / Outline
+Stage 10 — LSP Foundation
 ```
+
+Stage 9B has been accepted. Stage 10 builds the native LSP foundation on the
+completed Treesitter and structural navigation baseline.
 
 Exact source and deployed revisions should be determined from the current repositories rather than recorded here.
 
@@ -1013,7 +1016,7 @@ and isolated `stdpath("state")/sessions` storage are implemented in
 
 # 9. Stage 9 — Treesitter and Structural Navigation
 
-**Status: CURRENT**
+**Status: COMPLETE**
 
 ## Stage 9A — Treesitter Foundation
 
@@ -1048,7 +1051,7 @@ enable it merely as a side effect of installing Treesitter.
 
 ## Stage 9B — Symbols / Outline
 
-**Status: CURRENT**
+**Status: COMPLETE**
 
 Goal:
 
@@ -1059,16 +1062,22 @@ Treesitter-backed symbols initially
 LSP enrichment after Stage 10
 ```
 
-A useful symbols/outline layer should have a real structural backend rather
-than being introduced before Treesitter or LSP exists. Aerial is currently the
-leading implementation candidate, but the final plugin and configuration
-decision remains part of Stage 9B design.
+Implemented and accepted:
+
+* Nix-packaged Aerial with the existing native Treesitter parsers and upstream queries;
+* toggleable right-edge hierarchical outline, active-buffer following and current-symbol highlighting;
+* outline-local jumping and tree controls, with source-buffer motions unchanged;
+* Telescope document symbols at `<leader>sy`, preserving `<leader>ss` builtin discovery;
+* explicit Catppuccin integration and native `tex` → `latex` parser registration;
+* unsupported-buffer handling without adding LSP or another Treesitter framework.
+
+Stage 10 is the next milestone. Source acceptance does not imply production deployment.
 
 ---
 
 # 10. Stage 10 — LSP Foundation
 
-**Status: PLANNED**
+**Status: CURRENT**
 
 Goal:
 
@@ -1764,10 +1773,10 @@ This order may be refined when a dependency relationship provides a concrete rea
 | 8E    | Neovim/tmux navigation             | COMPLETE    |
 | 8F    | Quick terminal                    | COMPLETE    |
 | 8G    | Sessions / project context         | COMPLETE    |
-| 9     | Treesitter / structural navigation | **CURRENT** |
+| 9     | Treesitter / structural navigation | COMPLETE    |
 | 9A    | Treesitter foundation              | COMPLETE    |
-| 9B    | Symbols / Outline                  | **CURRENT** |
-| 10    | LSP foundation                     | PLANNED     |
+| 9B    | Symbols / Outline                  | COMPLETE    |
+| 10    | LSP foundation                     | **CURRENT** |
 | 11    | Completion/snippets                | PLANNED     |
 | 12    | Formatting/linting                 | PLANNED     |
 | 13    | Language vertical slices           | PLANNED     |

@@ -912,6 +912,57 @@ for _, suffix in ipairs({ "f", "r", "s", "d" }) do
   end
 end
 
+-- Aerial must consume the packaged native parsers without an LSP server.
+local aerial = require("aerial")
+if aerial.is_open() then fail("outline opened automatically") end
+local symbol_samples = {
+  { "python", "class Example:\n    def nested(self):\n        pass", "nested" },
+  { "lua", "local function outer()\n  local function nested() end\nend", "nested" },
+  { "markdown", "# Heading\n\n## Nested\n\ntext", "Nested" },
+  { "tex", "\\section{Heading}\n\\subsection{Nested}\ntext", "Nested" },
+}
+for _, sample in ipairs(symbol_samples) do
+  vim.cmd.enew()
+  local buf = vim.api.nvim_get_current_buf()
+  vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.split(sample[2], "\n"))
+  vim.bo[buf].filetype = sample[1]
+  require("user.navigation.aerial").symbols()
+  local picker = require("telescope.actions.state").get_current_picker(vim.api.nvim_get_current_buf())
+  if not picker or not vim.wait(1000, function()
+    return picker.manager and picker.manager:num_results() >= 2
+  end, 10) then
+    fail("document symbols unavailable without LSP: " .. sample[1])
+  end
+  local nested = false
+  for entry in picker.manager:iter() do
+    if entry.name == sample[3] and entry.value.parent then nested = true end
+  end
+  if not nested or not picker.previewer then
+    fail("nested document symbol or Telescope preview missing: " .. sample[1])
+  end
+  require("telescope.actions").close(picker.prompt_bufnr)
+  if vim.b[buf].aerial_backend ~= "treesitter" then
+    fail("document symbols did not use Treesitter: " .. sample[1])
+  end
+  aerial.open({ focus = false })
+  if not aerial.is_open() then fail("outline did not open") end
+  aerial.close()
+  if aerial.is_open() then fail("outline did not close") end
+  vim.api.nvim_buf_delete(buf, { force = true })
+end
+vim.cmd.enew()
+vim.bo.filetype = "text"
+local symbol_notify = vim.notify
+local disruptive = false
+vim.notify = function(_, level)
+  if level and level >= vim.log.levels.WARN then disruptive = true end
+end
+local unsupported_ok = pcall(require("user.navigation.aerial").symbols)
+vim.notify = symbol_notify
+if not unsupported_ok or disruptive then
+  fail("unsupported symbol filetype produced a disruptive error")
+end
+
 local sentinel_path = vim.env.NVIM_SMOKE_SENTINEL
 
 if not sentinel_path or sentinel_path == "" then

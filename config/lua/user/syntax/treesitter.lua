@@ -31,6 +31,9 @@ local function start_highlighting(args)
 end
 
 function M.setup()
+  -- Native consumers such as Aerial resolve parsers by filetype themselves.
+  vim.treesitter.language.register("latex", "tex")
+
   local group = vim.api.nvim_create_augroup("user.treesitter", { clear = true })
   vim.api.nvim_create_autocmd("FileType", {
     group = group,

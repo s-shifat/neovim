@@ -768,7 +768,7 @@ open files
 help
 keymaps
 diagnostics
-later Treesitter symbols
+Treesitter document symbols
 later LSP symbols/references
 ```
 
@@ -793,6 +793,7 @@ The initial search namespace is:
 <leader>sh  help
 <leader>sk  keymaps
 <leader>ss  Telescope builtins
+<leader>sy  document symbols through Aerial
 <leader>sn  editable Neovim config source when available
 <leader>sd  diagnostics
 ```
@@ -818,10 +819,26 @@ configuration remain authoritative where appropriate.
 
 ## Symbols / Outline
 
-Symbols should provide a structural outline and integrate with Telescope for
-fuzzy navigation. This interface is expected only after a structural backend
-such as Treesitter exists; it is not currently implemented. LSP may enrich it
-later.
+Aerial provides a right-edge hierarchical outline, closed by default.
+`<leader>o` toggles and focuses it; `q` closes it. It follows the active editing
+buffer across splits and highlights the current symbol. Explorer stays on the
+left and Bufferline remains full-width. Special UI buffers do not take over
+the outline.
+
+Inside the outline, Enter jumps to the symbol while keeping the outline open;
+`h`/`l` collapse/expand, `za` toggles a node, and `zM`/`zR` collapse/expand all.
+`?` shows upstream outline-local mappings. Source-buffer motions and folds are
+unchanged. Symbol kinds and nesting come from upstream Aerial queries over the
+existing native Treesitter parsers; no LSP server is required. Unsupported
+buffers may show an empty outline and symbol search gives an informational
+message when no backend exists. Large-file limits remain upstream defaults.
+
+`<leader>sy` searches document symbols using Aerial's Telescope extension with
+the existing layout, preview, and interaction defaults. `<leader>ss` retains
+Telescope builtin discovery. The historical LunarVim outline used
+`<leader>ve`; the current direct-toggle convention uses `<leader>o` instead.
+Catppuccin themes the outline; the existing Nerd Font/icon foundation supplies
+symbol icons. LSP enrichment remains Stage 10 work.
 
 ---
 

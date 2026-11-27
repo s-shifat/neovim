@@ -491,6 +491,31 @@ highlight colors are upstream/theme behavior, not fixed test snapshots.
 
 ---
 
+## Stage 9B Aerial symbols
+
+The smoke probe exercises Aerial's Telescope extension without LSP for nested
+Python/Lua functions and Markdown/LaTeX headings. It checks that native
+Treesitter provides the symbols, nested entries reach the picker, preview is
+available, outline open/close works, and unsupported text files do not emit
+disruptive errors. This protects plugin/query packaging and filetype-to-parser
+integration, especially native `tex` → `latex` registration.
+
+Use `nvim-next` to review right-edge placement alongside Explorer, active-buffer
+following, cursor synchronization, outline jumping/tree controls, and inherited
+Telescope interaction. Exact symbol styling and query contents are upstream
+behavior, not snapshots. Aerial introduces no persistent mutable-state path;
+the existing isolation test needs no additional category.
+
+Stage 9B was exercised through `nvim-next` with Neovim 0.12.5 and Aerial 4.0.0.
+The full smoke suite passed. A terminal-driven integration probe also checked
+current-symbol tracking, tree collapse/expand, definition jumping, following
+across editing splits, left Explorer/right outline placement, active Bufferline,
+Telescope layout/preview, fuzzy filtering and selection, preserved source motions,
+and session save/restore with the outline active. Visual appearance and physical keyboard ergonomics
+still require user review.
+
+---
+
 # 14. State-Isolation Regression
 
 Stable and experimental editor state must remain separated.
