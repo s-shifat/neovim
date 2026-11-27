@@ -31,10 +31,11 @@ let
       fi
 
       export NVIM_APPNAME=nvim-next
+      # Native -u skips project exrc loading, even when 'exrc' is enabled.
+      # VIMINIT selects the same bootstrap while retaining trusted .nvim.lua.
+      export VIMINIT="lua dofile(vim.env.NEOVIM_DEV_ROOT .. '/dev/init.lua')"
 
-      exec nvim \
-        -u "$NEOVIM_DEV_ROOT/dev/init.lua" \
-        "$@"
+      exec nvim "$@"
     '';
   };
 in

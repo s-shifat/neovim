@@ -484,6 +484,15 @@ config/
 
 tree.
 
+
+## Native project configuration
+
+The experimental wrapper sets `VIMINIT` to load `dev/init.lua`, rather than
+passing `-u`. The packaged Neovim also uses its Nix-owned startup entry. Native
+Neovim skips project exrc initialization with `-u`; using `VIMINIT` preserves
+trusted `.nvim.lua` overrides in both editors. The bootstrap still loads only
+the canonical `config/` tree, under `NVIM_APPNAME=nvim-next`.
+
 ---
 
 # 11. Stable and Experimental Application Identity

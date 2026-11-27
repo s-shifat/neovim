@@ -725,6 +725,17 @@ rather than constant blocks of diagnostic text inside source code.
 
 Explicit current diagnostic policy overrides historical LunarVim defaults when they differ.
 
+
+## Native LSP foundation
+
+The LSP foundation uses native configuration and Nix-owned servers. Capability-aware
+buffer mappings, diagnostic policy, server inventory, Python environment selection,
+project overrides and failure inspection are documented in [lsp.md](lsp.md).
+`<leader>l` owns LSP actions. Existing `<leader>sy`, `<leader>sd`, `<leader>ss`,
+outline and split navigation mappings retain their roles. The requested plain `gr`
+takes precedence over native `gr*` defaults in reference-capable buffers; `gi`
+is implementation navigation there. Stage 11 adds completion/snippets separately.
+
 ---
 
 # 18. Notifications
@@ -838,7 +849,7 @@ the existing layout, preview, and interaction defaults. `<leader>ss` retains
 Telescope builtin discovery. The historical LunarVim outline used
 `<leader>ve`; the current direct-toggle convention uses `<leader>o` instead.
 Catppuccin themes the outline; the existing Nerd Font/icon foundation supplies
-symbol icons. LSP enrichment remains Stage 10 work.
+symbol icons. Stage 10 adds LSP-first symbols with the same Treesitter fallback.
 
 ---
 

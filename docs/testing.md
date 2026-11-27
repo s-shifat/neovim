@@ -1175,3 +1175,44 @@ KEEP TESTS SMALL.
 DO NOT TEST COSMETICS.
 VALIDATE WHAT AUTOMATION CANNOT.
 ```
+
+
+## Stage 10 native LSP
+
+The short smoke probe checks that all configured server executables are available
+and enabled, then disables clients for the existing offline parser/Aerial tests.
+Live client behavior lives separately in `tests/lsp.sh` and `tests/lsp.lua`,
+exposed as `checks.<system>.lsp` so promotion also protects the packaged artifact.
+The integration suite uses temporary HOME/XDG/project directories, 20-second
+attachment/diagnostic waits and 10-second protocol request bounds. A test-only
+Python creates disposable environments without pip or downloads; the editor
+does not depend on Python or create environments.
+
+The suite covers all nine real servers initializing, resolving project roots
+and publishing diagnostics. Additional checks cover Python `.venv`/activated
+imports and environment refresh on restart, Lua runtime types, Nix import
+definitions, Lua hover/references/rename/code actions, semantic highlighting
+with Treesitter, mapped Telescope references with preview/resume, LSP Aerial
+and fallback after detach, mapping cleanup, native restart, single-file mode,
+trusted `.nvim.lua` settings and simulated missing-executable editability.
+The existing smoke probe continues to cover Explorer, Bufferline, split
+navigation and project session restoration. Terminal appearance and physical
+key interaction remain manual acceptance work.
+
+For a development run, supply an available Python executable solely for fixtures:
+
+```bash
+NVIM_NEXT_WORKTREE="$PWD" NVIM_LSP_NVIM=nvim-next \
+  NVIM_LSP_PYTHON=/path/to/python3 bash tests/lsp.sh
+```
+
+The Nix LSP check supplies its own test Python and needs no network access for
+acceptance assertions. Optional upstream schema catalogs can log download
+failures offline; base diagnostics/navigation do not depend on those catalogs.
+
+Stage 10 validation passed on x86_64-linux: the full live suite through
+`nvim-next`, the packaged `lsp` and `smoke` checks, and the stable/experimental
+state-isolation test using the candidate package. Native `:checkhealth vim.lsp`
+confirmed all nine enabled configurations; four inherited compound-filetype
+warnings are documented in `lsp.md`. aarch64 execution and visual acceptance
+were not performed.

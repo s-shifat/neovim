@@ -734,3 +734,14 @@ ISOLATE MUTABLE EDITOR STATE.
 USE NVIM_APPNAME FIRST.
 DERIVE PATHS FROM STDPATH().
 ```
+
+
+## Stage 10 language servers
+
+Native LSP logs use the current editor's `stdpath("state")`. Common server
+`cmd_env` sets child `XDG_CACHE_HOME` to `stdpath("cache") .. "/lsp"` and
+`XDG_STATE_HOME` to `stdpath("state") .. "/lsp"`. In particular, the Nix LuaLS
+wrapper's log/meta cache otherwise uses the user's shared XDG cache. Project
+environments and source/configuration files remain shared intentionally.
+The live LSP check verifies resolved server paths against the application
+identity; the existing stable/experimental test covers the underlying stdpaths.

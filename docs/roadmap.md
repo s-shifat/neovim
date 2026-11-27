@@ -81,17 +81,17 @@ A stage may also contain smaller completed and remaining sub-stages.
 The latest completed editor milestone is:
 
 ```text
-Stage 9B — Symbols / Outline
+Stage 10 — LSP Foundation
 ```
 
 The current editor-development target is:
 
 ```text
-Stage 10 — LSP Foundation
+Stage 11 — Completion and Snippets
 ```
 
-Stage 9B has been accepted. Stage 10 builds the native LSP foundation on the
-completed Treesitter and structural navigation baseline.
+Stage 10 has been accepted. Stage 11 — Completion and Snippets is the current
+editor-development target. Source acceptance does not imply production deployment.
 
 Exact source and deployed revisions should be determined from the current repositories rather than recorded here.
 
@@ -1077,7 +1077,7 @@ Stage 10 is the next milestone. Source acceptance does not imply production depl
 
 # 10. Stage 10 — LSP Foundation
 
-**Status: CURRENT**
+**Status: COMPLETE**
 
 Goal:
 
@@ -1112,11 +1112,24 @@ No Mason.
 
 Native APIs must be checked against the Neovim version actually packaged by the project.
 
+Accepted implementation:
+
+* Nix-owned nvim-lspconfig and nine servers with native config/enable APIs;
+* capability-aware navigation/actions, native diagnostics and bounded restart;
+* LSP-first Aerial with Treesitter fallback and existing Telescope interaction;
+* Python environment discovery, trusted project overrides and isolated server state;
+* targeted live protocol/environment regression coverage, alongside startup smoke.
+
+See [lsp.md](lsp.md) for inventory, mappings, project settings and limitations,
+and [testing.md](testing.md) for validation. Stage 11 — Completion and Snippets
+is the next milestone.
+
+
 ---
 
 # 11. Stage 11 — Completion and Snippets
 
-**Status: PLANNED**
+**Status: CURRENT**
 
 Goal:
 
@@ -1776,8 +1789,8 @@ This order may be refined when a dependency relationship provides a concrete rea
 | 9     | Treesitter / structural navigation | COMPLETE    |
 | 9A    | Treesitter foundation              | COMPLETE    |
 | 9B    | Symbols / Outline                  | COMPLETE    |
-| 10    | LSP foundation                     | **CURRENT** |
-| 11    | Completion/snippets                | PLANNED     |
+| 10    | LSP foundation                     | COMPLETE    |
+| 11    | Completion/snippets                | **CURRENT** |
 | 12    | Formatting/linting                 | PLANNED     |
 | 13    | Language vertical slices           | PLANNED     |
 | 14    | Git workflow                       | PLANNED     |

@@ -18,6 +18,7 @@ function M.setup()
 
   which_key.add({
     { "<leader>g", group = "Git" },
+    { "<leader>l", group = "LSP" },
     { "<leader>n", group = "Notifications" },
     { "<leader>p", group = "Project" },
     { "<leader>s", group = "Search" },

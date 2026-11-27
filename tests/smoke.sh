@@ -57,6 +57,16 @@ if vim.g.neovim_config_loaded ~= true then
   fail("packaged Neovim configuration did not finish loading")
 end
 
+-- Check shared executable availability here; tests/lsp.sh exercises live clients.
+-- Disabling clients keeps this probe's offline Treesitter fallback deterministic.
+for name in pairs(require("user.lsp.servers")) do
+  local config = vim.lsp.config[name]
+  if not vim.lsp.is_enabled(name) or vim.fn.executable(config.cmd[1]) ~= 1 then
+    fail("Nix-owned LSP server unavailable: " .. name)
+  end
+  vim.lsp.enable(name, false)
+end
+
 -- The packaged parser/query inventory must work through native Neovim APIs.
 if type(vim.treesitter.start) ~= "function"
   or type(vim.treesitter.language.add) ~= "function"

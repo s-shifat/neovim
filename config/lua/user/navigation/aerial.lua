@@ -1,8 +1,8 @@
 local M = {}
 
 local config = {
-  -- Stage 10 can add LSP here; parsers and queries already come from Nix.
-  backends = { "treesitter" },
+  -- Prefer server symbols; native parser queries remain the offline fallback.
+  backends = { "lsp", "treesitter" },
   attach_mode = "global", -- Follow the active editing window across splits.
   open_automatic = false,
   layout = {

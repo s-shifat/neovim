@@ -677,3 +677,15 @@ UPSTREAM HISTORICAL PROJECT
 CURRENT UPSTREAM PROJECTS
 → HOW TO IMPLEMENT IT TODAY
 ```
+
+
+## Stage 10 native LSP sources
+
+- [Neovim native LSP](https://neovim.io/doc/user/lsp.html), checked against the packaged runtime.
+- [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig): server filetypes, roots and defaults, consumed through native config/enable.
+- [Basedpyright language-server settings](https://docs.basedpyright.com/latest/configuration/language-server-settings/): interpreter and analysis configuration.
+- [LuaLS settings](https://luals.github.io/wiki/settings/): runtime and workspace libraries.
+
+Server package versions come from this repository's pinned nixpkgs, not upstream
+HEAD. Historical LunarVim LSP/default Which-Key mappings inform muscle memory;
+the current Stage 10 ticket overrides historical implementation and conflicting keys.
